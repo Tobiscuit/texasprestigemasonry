@@ -31,7 +31,7 @@ const memoryDB: Record<string, any[]> = {
 export const auth = betterAuth({
   baseURL: process.env.BETTER_AUTH_BASE_URL || "http://localhost:3000",
   secret: process.env.BETTER_AUTH_SECRET || "fallback_secret_for_build",
-  database: memoryAdapter(),
+  database: memoryAdapter(memoryDB),
   emailAndPassword: {
     enabled: false,
   },
