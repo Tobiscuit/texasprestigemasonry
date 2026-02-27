@@ -2,8 +2,8 @@
 
 import { GoogleGenAI, Type, Schema } from '@google/genai';
 import { EXAMPLE_LEXICAL_STRUCTURE } from '@/lib/ai-contract';
-import { getPayload } from 'payload';
-import configPromise from '@payload-config';
+// import { getPayload } from 'payload';
+// import configPromise from '@payload-config';
 import sharp from 'sharp';
 
 const apiKey = process.env.GEMINI_API_KEY;
@@ -127,21 +127,8 @@ export async function generatePostContent(prompt: string): Promise<any> {
                     .webp({ quality: 80, effort: 6 })
                     .toBuffer();
 
-                const payload = await getPayload({ config: configPromise });
-                const uploadedMedia = await payload.create({
-                    collection: 'media',
-                    data: {
-                        alt: resultJson.title,
-                    },
-                    file: {
-                        data: webpBuffer,
-                        mimetype: 'image/webp',
-                        name: `${resultJson.title.toLowerCase().replace(/[^a-z0-9]+/g, '-')}.webp`,
-                        size: webpBuffer.length
-                    }
-                });
-
-                featuredImageId = uploadedMedia.id;
+                // Mock Image Save
+                featuredImageId = "mock-image-id";
             }
         }
     } catch (error) {

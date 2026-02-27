@@ -1,1 +1,1 @@
-export { Settings } from './Settings';
+export { defaultSettings as Settings, type SettingsConfig } from './Settings';

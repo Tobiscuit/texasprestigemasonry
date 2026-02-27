@@ -1,7 +1,5 @@
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
-import { getPayload } from 'payload';
-import configPromise from '@payload-config';
 import { getSessionSafe } from '@/lib/get-session-safe';
 import { provisionUserFromSession } from '@/lib/provision-user-from-session';
 
@@ -26,30 +24,8 @@ async function completeStaffProfile(formData: FormData) {
     redirect('/profile/complete?error=missing_name');
   }
 
-  const payload = await getPayload({ config: configPromise });
-  const found = await payload.find({
-    collection: 'users',
-    where: {
-      email: {
-        equals: email,
-      },
-    },
-    limit: 1,
-    depth: 0,
-  });
-
-  const user = found.docs[0] as { id: string | number } | undefined;
-  if (!user) {
-    redirect('/login');
-  }
-
-  await payload.update({
-    collection: 'users',
-    id: user.id,
-    data: {
-      name: fullName,
-    } as any,
-  });
+  // Mocking the update while payload is removed and Drizzle is being wired
+  console.log('Profile update requested for:', fullName);
 
   redirect('/app');
 }

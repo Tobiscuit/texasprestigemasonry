@@ -2,7 +2,7 @@ import React from 'react';
 import Link from 'next/link';
 import { getServices } from './actions';
 import { DataTable } from '@/features/admin/ui/DataTable';
-import { Service } from '@/payload-types';
+import type { Service } from '@/types/models';
 
 // This is a Server Component
 export default async function ServicesPage() {

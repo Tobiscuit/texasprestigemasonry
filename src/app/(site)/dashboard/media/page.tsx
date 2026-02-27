@@ -1,18 +1,12 @@
 import React from 'react';
 import Link from 'next/link';
-import { getPayload } from 'payload';
-import configPromise from '@payload-config';
+// import { getPayload } from 'payload';
+// import configPromise from '@payload-config';
 import Image from 'next/image';
 import QuickUpload from '@/features/admin/media/QuickUpload';
 
-async function getMedia() {
-  const payload = await getPayload({ config: configPromise });
-  const results = await payload.find({
-    collection: 'media',
-    limit: 100,
-    sort: '-createdAt',
-  });
-  return results.docs;
+async function getMedia(): Promise<any[]> {
+  return [];
 }
 
 export default async function MediaPage() {

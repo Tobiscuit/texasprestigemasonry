@@ -1,19 +1,10 @@
 'use client';
-
 import React from 'react';
-import { useRouter } from 'next/navigation';
-import MediaUpload from '@/features/admin/ui/MediaUpload';
 
 export default function QuickUpload() {
-  const router = useRouter();
-
   return (
-    <MediaUpload 
-        label="Drop Image Here"
-        onUploadComplete={(media) => {
-            // Refresh the page to show the new upload in the list
-            router.refresh();
-        }} 
-    />
+    <div>
+      <p className="text-sm text-[var(--staff-muted)]">Upload disabled - connecting to new API</p>
+    </div>
   );
 }

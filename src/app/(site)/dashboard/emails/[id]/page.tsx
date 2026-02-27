@@ -12,7 +12,7 @@ interface PageProps {
 
 export default async function EmailThreadPage({ params }: PageProps) {
   const { id } = await params;
-  const threadData = await getThreadDetails(id);
+  const threadData = await getThreadDetails(id) as any;
 
   if (!threadData) {
     notFound();
@@ -69,7 +69,7 @@ export default async function EmailThreadPage({ params }: PageProps) {
                   <div>
                      <div className="font-bold text-[var(--staff-text)] text-lg">
                         {/* We would look this up from Users collection */}
-                        {threadData.messages.find(m => m.direction === 'inbound')?.from || 'Unknown'}
+                        {threadData.messages.find((m: { direction: string; from?: string }) => m.direction === 'inbound')?.from || 'Unknown'}
                      </div>
                      <div className="text-sm text-[var(--staff-muted)]">Residential Customer</div>
                   </div>

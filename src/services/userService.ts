@@ -1,18 +1,14 @@
-import { Payload } from 'payload';
+// Removed: import { Payload } from 'payload';
 
 export const userService = {
-  getProfile: async (payload: Payload, userId: string | number) => {
-    return payload.findByID({
-      collection: 'users',
-      id: userId,
-    });
+  getProfile: async (userId: string | number) => {
+    // TODO: Replace with Hono API / Drizzle call
+    return null;
   },
 
-  updateProfile: async (payload: Payload, userId: string | number, data: any) => {
-    return payload.update({
-      collection: 'users',
-      id: userId,
-      data,
-    });
+  updateProfile: async (userId: string | number, data: any) => {
+    // TODO: Replace with Hono API / Drizzle call
+    console.log('Mock updateProfile:', userId, data);
+    return null;
   }
 };

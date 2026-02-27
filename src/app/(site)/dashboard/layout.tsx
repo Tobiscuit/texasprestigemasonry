@@ -4,8 +4,8 @@ import { getSessionSafe } from '@/lib/get-session-safe';
 import NativeSignInPrompt from '@/features/auth/NativeSignInPrompt';
 import Sidebar from '@/features/admin/Sidebar';
 import React from 'react';
-import { getPayload } from 'payload';
-import configPromise from '@payload-config';
+// import { getPayload } from 'payload';
+// import configPromise from '@payload-config';
 
 export default async function DashboardLayout({
   children,
@@ -19,9 +19,10 @@ export default async function DashboardLayout({
     redirect('/login');
   }
 
-  const payload = await getPayload({ config: configPromise });
-  const settings = await payload.findGlobal({ slug: 'settings' });
-  const themePreference = settings.themePreference || 'candlelight';
+  // Mock settings until Hono API is ready
+  const themePreference: 'candlelight' | 'original' = 'candlelight';
+
+  const isOriginalTheme = themePreference === ('original' as typeof themePreference);
 
   return (
     <div 
@@ -33,7 +34,7 @@ export default async function DashboardLayout({
       <script
         dangerouslySetInnerHTML={{
           __html:
-            `try{var t=localStorage.getItem('app-theme')||'light';document.documentElement.setAttribute('data-app-theme',t);${themePreference === 'original' ? "document.documentElement.setAttribute('data-light-theme','original');" : ''}}catch(e){}`,
+            `try{var t=localStorage.getItem('app-theme')||'light';document.documentElement.setAttribute('data-app-theme',t);${isOriginalTheme ? "document.documentElement.setAttribute('data-light-theme','original');" : ''}}catch(e){}`,
         }}
       />
       <Sidebar />

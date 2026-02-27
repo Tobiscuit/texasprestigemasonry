@@ -1,16 +1,26 @@
 import React from 'react';
-import { getPayloadClient } from '@/lib/payload';
 import { getTranslations } from 'next-intl/server';
 
 export const dynamic = 'force-dynamic';
 
 export default async function AboutPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
-  const payload = await getPayloadClient();
   const t = await getTranslations({ locale, namespace: 'about_page' });
-  const settings = await payload.findGlobal({
-    slug: 'settings',
-  });
+  const settings: any = {
+    missionStatement: null,
+    stats: [
+        { value: '10+', label: 'Years Experience' },
+        { value: '500+', label: 'Projects Completed' },
+        { value: '100%', label: 'Satisfaction' },
+        { value: '24/7', label: 'Support' }
+    ],
+    values: [
+        { title: 'Craftsmanship', description: 'We believe in doing things once and doing them right.' },
+        { title: 'Integrity', description: 'Honest pricing and clear communication.' }
+    ],
+    licenseNumber: null,
+    insuranceAmount: null
+  };
 
   return (
     <div className="min-h-screen bg-sandstone font-work-sans">

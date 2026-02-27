@@ -3,7 +3,7 @@ import React from 'react';
 import Link from 'next/link';
 import { getProjects } from './actions';
 import { DataTable } from '@/features/admin/ui/DataTable';
-import { Project } from '@/payload-types';
+import type { Project } from '@/types/models';
 import Image from 'next/image';
 
 export default async function ProjectsPage() {

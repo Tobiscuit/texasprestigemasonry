@@ -6,7 +6,7 @@ import ProjectForm from '@/features/admin/projects/ProjectForm';
 
 export default async function EditProjectPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const project = await getProjectById(id);
+  const project = await getProjectById(id) as any;
 
   if (!project) {
     notFound();

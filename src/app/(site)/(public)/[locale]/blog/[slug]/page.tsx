@@ -1,6 +1,4 @@
 import React from 'react';
-import { getPayload } from 'payload';
-import configPromise from '@payload-config';
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -98,24 +96,18 @@ const RichTextRenderer = ({ content }: { content: any }) => {
 
 export default async function BlogPost({ params }: { params: Promise<{ slug: string; locale: string }> }) {
     const { slug, locale } = await params;
-    const payload = await getPayload({ config: configPromise });
     const t = await getTranslations({ locale, namespace: 'blog_detail' });
 
-    const posts = await payload.find({
-        collection: 'posts',
-        where: {
-            slug: {
-                equals: slug,
-            },
-        },
-        locale: locale as 'en' | 'es',
-    });
-
-    if (!posts.docs.length) {
-        notFound();
-    }
-
-    const post = posts.docs[0];
+    // Fallback Mock Post
+    const post: any = {
+        title: 'Example Blog Post',
+        slug,
+        category: 'masonry',
+        publishedAt: new Date().toISOString(),
+        excerpt: 'This is a sample excerpt while the blog is being migrated to the Edge.',
+        htmlContent: '<p>Sample blog content deployed on Cloudflare Workers.</p>',
+        featuredImage: null,
+    };
 
     return (
         <div className="bg-sandstone min-h-screen pb-24 font-work-sans">

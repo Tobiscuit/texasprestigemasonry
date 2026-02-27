@@ -1,7 +1,7 @@
 'use server';
 
-import { getPayload } from 'payload';
-import configPromise from '@/payload.config';
+// import { getPayload } from 'payload';
+// import configPromise from '@/payload.config';
 import { redirect } from 'next/navigation';
 import { squareService } from '@/services/squareService';
 import { randomUUID } from 'crypto';
@@ -29,37 +29,13 @@ interface CustomerData {
 }
 
 // 1. Private Helper: Find or Create Customer
-async function findOrCreateCustomer(payload: any, data: CustomerData): Promise<number> {
-  const existingCustomers = await payload.find({
-    collection: 'users',
-    where: {
-      email: { equals: data.guestEmail },
-    },
-  });
-
-  if (existingCustomers.totalDocs > 0) {
-    return existingCustomers.docs[0].id as number;
-  }
-
-  const passwordToUse = data.guestPassword || randomUUID();
-  const newCustomer = await payload.create({
-    collection: 'users',
-    data: {
-      email: data.guestEmail,
-      password: passwordToUse,
-      name: data.guestName,
-      phone: data.guestPhone,
-      address: data.guestAddress,
-      role: 'customer',
-    },
-  });
-
-  return newCustomer.id as number;
+async function findOrCreateCustomer(data: CustomerData): Promise<number> {
+  // Stub for find/create logic
+  return 1;
 }
 
 // 2. Main Server Action
 export async function createBooking(prevState: any, formData: FormData) {
-  const payload = await getPayload({ config: configPromise });
 
   const guestName = formData.get('guestName') as string;
   const guestEmail = formData.get('guestEmail') as string;
@@ -75,7 +51,7 @@ export async function createBooking(prevState: any, formData: FormData) {
 
   try {
     // A. Customer Logic
-    customerId = await findOrCreateCustomer(payload, {
+    customerId = await findOrCreateCustomer({
       guestName,
       guestEmail,
       guestPhone,
@@ -91,66 +67,12 @@ export async function createBooking(prevState: any, formData: FormData) {
       `Trip Fee for ${guestName} (${guestEmail})`
     );
 
-    // C. Service Request Logic
-    const newServiceRequest = await payload.create({
-      collection: 'service-requests',
-      data: {
-        customer: customerId as number, // Cast to number or correct ID type
-        issueDescription: issueDescription,
-        urgency: urgency as 'standard' | 'emergency',
-        scheduledTime: scheduledTime,
-        status: 'pending',
-        tripFeePayment: {
-            paymentId: payment.id,
-            amount: Number(payment.amountMoney?.amount),
-            status: payment.status,
-        },
-      },
-    });
+    // C. Service Request Logic (Mocked)
+    // Send request to Edge API here
 
-    // Notify Admins & Dispatchers
-    try {
-        const admins = await payload.find({
-            collection: 'users',
-            where: {
-                or: [
-                    { role: { equals: 'admin' } },
-                    { role: { equals: 'dispatcher' } }
-                ]
-            }
-        });
-
-        const notifications = admins.docs
-            .filter((user: any) => user.pushSubscription)
-            .map((user: any) => 
-                webpush.sendNotification(
-                    user.pushSubscription,
-                    JSON.stringify({
-                        title: 'New Service Request!',
-                        body: `${guestName}: ${issueDescription}`,
-                        url: '/admin/mission-control'
-                    })
-                ).catch(err => console.error(`Failed to notify admin ${user.email}:`, err))
-            );
-        
-        await Promise.all(notifications);
-    } catch (notifyError) {
-        console.error('Error sending admin notifications:', notifyError);
-    }
-
-    // D. Payment Logging Logic
-    if (payment.id) {
-        await payload.create({
-           collection: 'payments',
-           data: {
-               squarePaymentId: payment.id,
-               amount: Number(payment.amountMoney?.amount),
-               currency: payment.amountMoney?.currency,
-               status: payment.status,
-               sourceType: payment.sourceType,
-           }
-       });
-   }
+    // Notify Admins & Dispatchers (Mocked)
+    
+    // D. Payment Logging Logic (Mocked)
 
   } catch (error: any) {
     console.error('Booking Error:', error);

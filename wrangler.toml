@@ -1,0 +1,21 @@
+# Cloudflare Wrangler Configuration
+# Texas Prestige Masonry — Next.js on Cloudflare Pages
+
+name = "texas-prestige-masonry"
+compatibility_date = "2024-12-01"
+compatibility_flags = ["nodejs_compat"]
+
+# D1 Database binding
+[[d1_databases]]
+binding = "DB"
+database_name = "texas-prestige-masonry-db"
+database_id = "2005fdef-f3b0-4132-abf3-7b97e29431a7"
+
+# R2 Bucket for media uploads (optional, configure when ready)
+# [[r2_buckets]]
+# binding = "MEDIA_BUCKET"
+# bucket_name = "texas-prestige-masonry-media"
+
+# Environment variables
+[vars]
+NEXT_PUBLIC_SERVER_URL = "https://texasprestigemasonry.com"

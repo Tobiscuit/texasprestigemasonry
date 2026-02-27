@@ -1,5 +1,4 @@
 import React from 'react';
-import { getPayloadClient } from '@/lib/payload';
 import { getTranslations } from 'next-intl/server';
 
 // Icon mapping helper
@@ -24,13 +23,10 @@ export const dynamic = 'force-dynamic';
 
 export default async function ServicesPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
-  const payload = await getPayloadClient();
   const t = await getTranslations({ locale, namespace: 'services_page' });
-  const { docs: services } = await payload.find({
-    collection: 'services',
-    sort: 'order',
-    locale: locale as 'en' | 'es',
-  });
+  
+  // Fallback while API is being rebuilt
+  const services: any[] = [];
 
   return (
     <div className="min-h-screen bg-sandstone font-work-sans">

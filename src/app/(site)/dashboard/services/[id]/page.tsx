@@ -6,7 +6,7 @@ import ServiceForm from '@/features/admin/services/ServiceForm';
 
 export default async function EditServicePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const service = await getServiceById(id);
+  const service = await getServiceById(id) as any;
 
   if (!service) {
     notFound();

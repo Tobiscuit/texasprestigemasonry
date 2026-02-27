@@ -1,7 +1,4 @@
-import { getPayload } from 'payload';
-import configPromise from '@/payload.config';
 import { headers } from 'next/headers';
-import { serviceRequestService } from '@/services/serviceRequestService';
 import { PortalHeader } from '@/features/portal/PortalHeader';
 import { ActiveRequestList } from '@/features/portal/ActiveRequestList';
 import { ServiceHistory } from '@/features/portal/ServiceHistory';
@@ -16,55 +13,20 @@ export default async function PortalDashboard() {
 
   if (!session) return null; // Handled by layout/middleware
 
-  const payload = await getPayload({ config: configPromise });
   const user = session.user;
 
-  // 1) Find the Payload User by email (since BetterAuth uses UUIDs and Payload Postgres uses Ints)
-  const payloadUsers = await payload.find({
-    collection: 'users',
-    where: { email: { equals: user.email } },
-    depth: 0,
-  });
-
-  let payloadUserId: number | null = null;
-  let customerData = payloadUsers.docs[0];
-
-  if (customerData) {
-    payloadUserId = customerData.id as number;
-  } else {
-    // 2) Auto-sync fresh Google SSO logins into Payload
-    customerData = await payload.create({
-      collection: 'users',
-      data: {
-        email: user.email,
-        name: user.name || '',
-        role: 'customer',
-      }
-    });
-    payloadUserId = customerData.id as number;
-  }
-
-  const isBuilder = customerData.customerType === 'builder';
-  const customer = customerData; // Alias for the UI components
-
-  // Use Service Layer for data fetching using the Integer Payload ID
-  const activeRequests = await serviceRequestService.getActiveRequests(payload, payloadUserId);
-  const pastRequests = await serviceRequestService.getPastRequests(payload, payloadUserId);
-
-  const activeMapped = activeRequests.docs.map(doc => ({
-    id: String(doc.id),
-    ticketId: (doc as any).ticketId,
-    status: (doc as any).status,
-    issueDescription: (doc as any).issueDescription,
-    scheduledTime: (doc as any).scheduledTime,
-  }));
-
-  const pastMapped = pastRequests.docs.map(doc => ({
-    id: String(doc.id),
-    ticketId: (doc as any).ticketId,
-    issueDescription: (doc as any).issueDescription,
-    createdAt: doc.createdAt,
-  }));
+  // Mock Data
+  const customer: any = {
+    name: user.name || 'Valued Client',
+    email: user.email,
+    phone: '',
+    companyName: user.name || '',
+    customerType: 'standard',
+  };
+  const isBuilder = false;
+  
+  const activeMapped: any[] = [];
+  const pastMapped: any[] = [];
 
   return (
     <div className="space-y-8">

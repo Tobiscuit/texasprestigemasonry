@@ -3,7 +3,7 @@ import React from 'react';
 import Link from 'next/link';
 import { getPosts } from './actions';
 import { DataTable } from '@/features/admin/ui/DataTable';
-import { Post } from '@/payload-types';
+import type { Post } from '@/types/models';
 
 export default async function PostsPage() {
   const posts = await getPosts();

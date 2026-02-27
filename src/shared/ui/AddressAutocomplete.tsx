@@ -1,7 +1,6 @@
 'use client';
 
-import React, { useRef, useEffect, useState } from 'react';
-import { v4 as uuidv4 } from 'uuid';
+import React, { useRef, useEffect, useState, useCallback } from 'react';
 
 interface AddressAutocompleteProps {
   onAddressSelect: (place: any) => void;
@@ -27,7 +26,7 @@ export const AddressAutocomplete: React.FC<AddressAutocompleteProps> = ({
 
   // Initialize Session Token
   useEffect(() => {
-    setSessionToken(uuidv4());
+    setSessionToken(crypto.randomUUID());
   }, []);
 
   // Handle Input Change
@@ -96,7 +95,7 @@ export const AddressAutocomplete: React.FC<AddressAutocompleteProps> = ({
             
             onAddressSelect(placeResult);
             // Reset Session Token after selection (End of Session)
-            setSessionToken(uuidv4());
+            setSessionToken(crypto.randomUUID());
         }
     } catch (error) {
         console.error("Details Error:", error);

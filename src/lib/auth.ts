@@ -1,30 +1,26 @@
 import { betterAuth } from 'better-auth';
-import { drizzleAdapter } from 'better-auth/adapters/drizzle';
 import { memoryAdapter } from 'better-auth/adapters/memory';
-import { drizzle } from 'drizzle-orm/node-postgres';
-import { Pool } from 'pg';
 import { passkey } from '@better-auth/passkey';
 import { magicLink } from 'better-auth/plugins/magic-link';
 import { nextCookies } from 'better-auth/next-js';
-import { authSchema } from './auth-schema';
 import { sendEmail } from './email';
 
-const dbUri = process.env.DATABASE_URI;
+/**
+ * BetterAuth Configuration
+ * 
+ * Currently using memory adapter until D1 (SQLite) integration is complete.
+ * When D1 is ready, switch to:
+ *   import { drizzleAdapter } from 'better-auth/adapters/drizzle';
+ *   import { drizzle } from 'drizzle-orm/d1';
+ */
 
-if (!dbUri) {
-  throw new Error('DATABASE_URI is required for BetterAuth setup');
-}
-
-const pool = new Pool({ connectionString: dbUri });
-export const db = drizzle(pool);
 const baseURL =
   process.env.BETTER_AUTH_BASE_URL ||
   process.env.NEXT_PUBLIC_SERVER_URL ||
   'http://localhost:3000';
 const rpID = new URL(baseURL).hostname;
-const authSecret = process.env.BETTER_AUTH_SECRET || process.env.PAYLOAD_SECRET;
-const useMemoryAuth =
-  process.env.BETTER_AUTH_USE_MEMORY === 'true';
+const authSecret = process.env.BETTER_AUTH_SECRET;
+
 const memoryDB: Record<string, any[]> = {
   user: [],
   session: [],
@@ -34,18 +30,13 @@ const memoryDB: Record<string, any[]> = {
 };
 
 if (!authSecret) {
-  throw new Error('BETTER_AUTH_SECRET or PAYLOAD_SECRET is required for BetterAuth setup');
+  throw new Error('BETTER_AUTH_SECRET is required for BetterAuth setup');
 }
 
 export const auth = betterAuth({
   baseURL,
   secret: authSecret,
-  database: useMemoryAuth
-    ? memoryAdapter(memoryDB)
-    : drizzleAdapter(db, {
-        provider: 'pg',
-        schema: authSchema,
-      }),
+  database: memoryAdapter(memoryDB),
   emailAndPassword: {
     enabled: false,
   },
@@ -63,7 +54,6 @@ export const auth = betterAuth({
     nextCookies(),
     magicLink({
       sendMagicLink: async ({ email, url }) => {
-        // Always log the magic link URL for local development
         console.log(`\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`);
         console.log(`🔑 MAGIC LINK for ${email}:`);
         console.log(url);
@@ -71,7 +61,7 @@ export const auth = betterAuth({
         try {
           await sendEmail({
              to: email,
-             subject: 'Sign in to Mobile Garage Door',
+             subject: 'Sign in to Texas Prestige Masonry',
              html: `<p>Click the link below to sign in:</p><a href="${url}">${url}</a><p>If you didn't request this, you can ignore this email.</p>`,
              text: `Click the link below to sign in:\n\n${url}\n\nIf you didn't request this, you can ignore this email.`
           });
@@ -81,7 +71,7 @@ export const auth = betterAuth({
       },
     }),
     passkey({
-      rpName: 'Mobil Garage Door',
+      rpName: 'Texas Prestige Masonry',
       rpID,
       origin: baseURL,
     }),

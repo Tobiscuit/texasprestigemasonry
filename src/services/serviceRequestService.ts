@@ -1,40 +1,18 @@
-import { Payload } from 'payload';
+// Removed: import { Payload } from 'payload';
 
 export const serviceRequestService = {
-  getActiveRequests: async (payload: Payload, userId: string | number) => {
-    return payload.find({
-      collection: 'service-requests' as any,
-      where: {
-        customer: { equals: userId },
-        status: { 
-            not_in: ['completed', 'cancelled'] // Exclude both completed and cancelled
-        }, 
-      },
-      sort: '-createdAt',
-    });
+  getActiveRequests: async (userId: string | number) => {
+    // TODO: Replace with Hono API / Drizzle call
+    return { docs: [], totalDocs: 0 };
   },
 
-  getPastRequests: async (payload: Payload, userId: string | number) => {
-    return payload.find({
-      collection: 'service-requests' as any,
-      where: {
-        customer: { equals: userId },
-        status: { 
-            in: ['completed', 'cancelled'] // Include cancelled in history
-        },
-      },
-      sort: '-createdAt',
-    });
+  getPastRequests: async (userId: string | number) => {
+    // TODO: Replace with Hono API / Drizzle call
+    return { docs: [], totalDocs: 0 };
   },
 
-  getAssignedRequests: async (payload: Payload, techId: string | number) => {
-    return payload.find({
-      collection: 'service-requests' as any,
-      where: {
-        assignedTech: { equals: techId },
-        status: { not_equals: 'completed' },
-      },
-      sort: 'scheduledTime', // Sort by schedule for techs
-    });
+  getAssignedRequests: async (techId: string | number) => {
+    // TODO: Replace with Hono API / Drizzle call
+    return { docs: [], totalDocs: 0 };
   }
 };

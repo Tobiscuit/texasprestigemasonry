@@ -1,17 +1,13 @@
 /**
- * Payload afterChange Hook: Auto-translate content to Spanish
- *
- * When English content is saved (created or updated), this hook:
- * 1. Detects which collection was modified
- * 2. Translates all localized fields (text, Lexical JSON, HTML, arrays)
- * 3. Saves the translated version via payload.update({ locale: targetLocale })
- *
- * Runs async in background — does not block the admin save.
+ * Auto-translate hook - previously a Payload afterChange hook.
+ * Stubbed out during Payload removal. Will be re-implemented
+ * as a Hono middleware or Drizzle hook once the new API is ready.
  */
-import type { CollectionAfterChangeHook } from 'payload';
+
+// Removed: import type { CollectionAfterChangeHook } from 'payload';
 import { translate, translateLexicalTree, translateArray } from '@/lib/translate-utils';
 
-// Field definitions per collection
+// Field definitions per collection (preserved for future use)
 const COLLECTION_FIELDS: Record<string, {
   textFields?: Array<{ name: string; context: string }>;
   richTextFields?: string[];
@@ -61,95 +57,19 @@ const COLLECTION_FIELDS: Record<string, {
   },
 };
 
-export const autoTranslateHook: CollectionAfterChangeHook = async ({
-  doc,
-  req,
-  operation,
-  collection,
-}) => {
-  // Only translate on create/update of English content
-  if (operation !== 'create' && operation !== 'update') return doc;
-
-  // Check if this is a Spanish save (avoid infinite loop)
-  const locale = req.locale || 'en';
-  if (locale !== 'en') return doc;
-
-  // Don't block the main request — translate in background
-  const collectionSlug = collection.slug;
+/**
+ * Stub: Auto-translate function that can be called from new API routes.
+ * Previously this was a Payload CollectionAfterChangeHook.
+ */
+export async function autoTranslate(
+  doc: any,
+  collectionSlug: string,
+  targetLocale: string = 'es'
+) {
   const fieldConfig = COLLECTION_FIELDS[collectionSlug];
   if (!fieldConfig) return doc;
 
-  // Fire and forget — don't await, don't block the admin UI
-  const targetLocales = ['es', 'vi'];
-  for (const targetLocale of targetLocales) {
-    translateInBackground(doc, collectionSlug, fieldConfig, req.payload, targetLocale).catch((err) => {
-      req.payload.logger.error({ err }, `Auto-translation failed for ${collectionSlug}/${doc.id} (${targetLocale})`);
-    });
-  }
-
+  console.log(`Mock auto-translate ${collectionSlug}/${doc.id} to ${targetLocale}`);
+  // TODO: Re-implement translation logic with Hono API / Drizzle
   return doc;
-};
-
-async function translateInBackground(
-  doc: any,
-  collectionSlug: string,
-  fieldConfig: typeof COLLECTION_FIELDS[string],
-  payload: any,
-  targetLocale: string
-) {
-  payload.logger.info(`🌎 Auto-translating ${collectionSlug}/${doc.id} to ${targetLocale}...`);
-
-  const updateData: Record<string, any> = {};
-
-  // 1. Translate plain text fields
-  if (fieldConfig.textFields) {
-    for (const { name, context } of fieldConfig.textFields) {
-      if (doc[name] && typeof doc[name] === 'string' && doc[name].trim()) {
-        updateData[name] = await translate(doc[name], context, targetLocale);
-      }
-    }
-  }
-
-  // 2. Translate Lexical richText fields (deep tree walk)
-  if (fieldConfig.richTextFields) {
-    for (const fieldName of fieldConfig.richTextFields) {
-      if (doc[fieldName] && typeof doc[fieldName] === 'object') {
-        updateData[fieldName] = await translateLexicalTree(doc[fieldName], targetLocale);
-      }
-    }
-  }
-
-  // 3. Translate HTML code fields
-  if (fieldConfig.htmlFields) {
-    for (const { name, context } of fieldConfig.htmlFields) {
-      if (doc[name] && typeof doc[name] === 'string' && doc[name].trim()) {
-        updateData[name] = await translate(doc[name], context, targetLocale);
-      }
-    }
-  }
-
-  // 4. Translate array fields
-  if (fieldConfig.arrayFields) {
-    for (const { name, fieldMap } of fieldConfig.arrayFields) {
-      if (doc[name] && Array.isArray(doc[name]) && doc[name].length > 0) {
-        updateData[name] = await translateArray(doc[name], fieldMap, targetLocale);
-      }
-    }
-  }
-
-  // Only update if we have fields to translate
-  if (Object.keys(updateData).length === 0) {
-    payload.logger.info(`  ⏭ No translatable fields found, skipping.`);
-    return;
-  }
-
-  // Save the translated version
-  await payload.update({
-    collection: collectionSlug,
-    id: doc.id,
-    locale: targetLocale as any,
-    data: updateData,
-  });
-
-  payload.logger.info(`  ✅ ${targetLocale} translation saved for ${collectionSlug}/${doc.id} (${Object.keys(updateData).length} fields)`);
 }

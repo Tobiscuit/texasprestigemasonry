@@ -1,8 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { getPayload } from 'payload';
-import configPromise from '@/payload.config';
 import SmartLink from '@/shared/ui/SmartLink';
 import ProjectCardImage from '@/features/landing/ProjectCardImage';
 import { getTranslations } from 'next-intl/server';
@@ -11,14 +9,10 @@ export const dynamic = 'force-dynamic';
 
 export default async function PortfolioPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
-  const payload = await getPayload({ config: configPromise });
   const t = await getTranslations({ locale, namespace: 'portfolio_page' });
-  const { docs: projects } = await payload.find({
-    collection: 'projects',
-    sort: '-completionDate', // Newest completions first
-    depth: 2,
-    locale: locale as 'en' | 'es',
-  });
+  
+  // Fallback while API is being rebuilt
+  const projects: any[] = [];
 
   return (
     <div className="min-h-screen bg-sandstone font-work-sans text-midnight-slate flex flex-col">

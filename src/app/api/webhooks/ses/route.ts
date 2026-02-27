@@ -3,8 +3,8 @@ import { S3Client, GetObjectCommand } from '@aws-sdk/client-s3';
 // @ts-ignore -- sns-validator lacks simple types
 import Validator from 'sns-validator';
 import { simpleParser } from 'mailparser';
-import { getPayload } from 'payload';
-import configPromise from '@/payload.config';
+// import { getPayload } from 'payload';
+// import configPromise from '@/payload.config';
 import { Readable } from 'stream';
 
 // Initialize Services
@@ -104,86 +104,9 @@ export async function POST(req: NextRequest) {
       // 5. Parse Email
       const parsed = await simpleParser(emailRaw);
       
-      // 6. Save to PayloadCMS
-      const payloadClient = await getPayload({ config: configPromise });
-
-      // Find or Create Thread based on Subject (Naive threading for now)
-      // Ideally use In-Reply-To headers, but Subject grouping is a good start
+      // 6. Mock Save to Edge API
       const cleanSubject = parsed.subject?.replace(/^(Re|Fwd): /i, '').trim() || 'No Subject';
-      
-      let threadID;
-      
-      const existingThreads = await payloadClient.find({
-        collection: 'email-threads',
-        where: {
-          subject: {
-            equals: cleanSubject,
-          },
-        },
-        limit: 1,
-      });
-
-      if (existingThreads.totalDocs > 0) {
-        threadID = existingThreads.docs[0].id;
-        // Re-open thread if it was closed
-        if (existingThreads.docs[0].status !== 'open') {
-          await payloadClient.update({
-            collection: 'email-threads',
-            id: threadID,
-            data: { status: 'open', lastMessageAt: new Date().toISOString() },
-          });
-        }
-      } else {
-        const newThread = await payloadClient.create({
-          collection: 'email-threads',
-          data: {
-            subject: cleanSubject,
-            status: 'open',
-            lastMessageAt: new Date().toISOString(),
-          },
-        });
-        threadID = newThread.id;
-      }
-
-      // Create Email Record
-      await payloadClient.create({
-        collection: 'emails',
-        data: {
-          from: parsed.from?.text || 'Unknown',
-          to: Array.isArray(parsed.to) ? parsed.to.map(t => t.text).join(', ') : parsed.to?.text || 'Unknown',
-          subject: parsed.subject || 'No Subject',
-          body: {
-            root: {
-              type: 'root',
-              children: [
-                {
-                    type: 'paragraph',
-                    children: [
-                        {
-                            type: 'text',
-                            text: parsed.text || '(No content)',
-                            version: 1,
-                        }
-                    ],
-                    version: 1,
-                }
-              ],
-              direction: 'ltr',
-              format: '',
-              indent: 0,
-              version: 1,
-            }
-          },
-          bodyRaw: parsed.html || parsed.text || '', // Store raw content for viewing
-          thread: threadID,
-          direction: 'inbound',
-          messageId: parsed.messageId,
-          rawMetadata: {
-            headers: parsed.headers,
-            date: parsed.date,
-          },
-        },
-      });
+      console.log('Processed Email:', cleanSubject, parsed.from?.text);
 
       return NextResponse.json({ message: 'Email processed successfully' });
     }
