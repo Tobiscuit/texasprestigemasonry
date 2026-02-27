@@ -11,7 +11,7 @@
     "lint": "next lint",
     "type-check": "tsc --noEmit",
     "seed": "tsx src/scripts/seed.ts",
-    "pages:build": "npx @opennextjs/cloudflare build"
+    "pages:build": "npx @opennextjs/cloudflare build && cp .open-next/worker.js .open-next/assets/_worker.js"
   },
   "engines": {
     "node": ">=25.0.0"

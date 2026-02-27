@@ -1,9 +1,6 @@
-# Cloudflare Wrangler Configuration
-# Texas Prestige Masonry — Next.js on Cloudflare Pages
-
-name = "texas-prestige-masonry"
-compatibility_date = "2024-12-01"
-compatibility_flags = ["nodejs_compat"]
+name = "texasprestigemasonry"
+compatibility_date = "2024-12-30"
+compatibility_flags = ["nodejs_compat", "global_fetch_strictly_public"]
 pages_build_output_dir = ".open-next/assets"
 
 # D1 Database binding
