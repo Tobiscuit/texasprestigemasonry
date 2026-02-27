@@ -1,0 +1,64 @@
+'use client';
+import React from 'react';
+import { BookingFormData } from '@/hooks/useBookingForm';
+import { useTranslations } from 'next-intl';
+
+interface IssueStepProps {
+  formData: BookingFormData;
+  updateField: (key: keyof BookingFormData, value: any) => void;
+  nextStep: () => void;
+  prevStep: () => void;
+}
+
+export function IssueStep({ formData, updateField, nextStep, prevStep }: IssueStepProps) {
+  const t = useTranslations('booking');
+  return (
+    <div className="space-y-6 animate-fadeIn relative z-10">
+      <h1 className="text-3xl font-black text-midnight-slate">{t('issue_heading')}</h1>
+      <div>
+        <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">{t('issue_label')}</label>
+        <textarea
+          className="w-full bg-gray-50 border border-gray-200 rounded-xl p-4 font-medium text-midnight-slate focus:ring-2 focus:ring-burnished-gold outline-none h-32 resize-none"
+          placeholder={t('issue_placeholder')}
+          value={formData.issueDescription}
+          onChange={(e) => updateField('issueDescription', e.target.value)}
+        />
+      </div>
+      <div>
+        <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">{t('urgency_label')}</label>
+        <div className="grid grid-cols-2 gap-4">
+          <button
+            onClick={() => updateField('urgency', 'standard')}
+            className={`p-4 rounded-xl border-2 text-left transition-all ${formData.urgency === 'standard' ? 'border-midnight-slate bg-blue-50/50 ring-2 ring-midnight-slate' : 'border-gray-100 hover:border-gray-300'}`}
+          >
+            <div className="font-bold text-midnight-slate">{t('standard')}</div>
+            <div className="text-xs text-gray-500">{t('standard_desc')}</div>
+          </button>
+          <button
+            onClick={() => updateField('urgency', 'emergency')}
+            className={`p-4 rounded-xl border-2 text-left transition-all ${formData.urgency === 'emergency' ? 'border-red-500 bg-red-50/50 ring-2 ring-red-500' : 'border-gray-100 hover:border-red-200'}`}
+          >
+            <div className="font-bold text-red-600 flex items-center gap-2">
+              {t('emergency')}
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
+              </span>
+            </div>
+            <div className="text-xs text-gray-500">{t('emergency_desc')}</div>
+          </button>
+        </div>
+      </div>
+      <div className="flex gap-4">
+        <button onClick={prevStep} className="w-1/3 text-gray-500 font-bold hover:text-midnight-slate">{t('back')}</button>
+        <button
+          onClick={nextStep}
+          disabled={!formData.issueDescription}
+          className="w-2/3 bg-midnight-slate text-white font-bold py-4 rounded-xl disabled:opacity-50 hover:bg-midnight-slate transition-all"
+        >
+          {t('continue')}
+        </button>
+      </div>
+    </div>
+  );
+}

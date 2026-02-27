@@ -1,0 +1,152 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap');
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+@theme {
+  /* Texas Prestige Masonry Colors */
+  --color-midnight-slate: #0F172A;
+  --color-terracotta-clay: #B84A39;
+  --color-burnished-gold: #C5A059;
+  --color-sandstone: #F4F1EA;
+  --color-mortar-gray: #D1D5DB;
+  
+  --font-outfit: 'Outfit', sans-serif;
+  --font-playfair: 'Playfair Display', serif;
+
+  --background-image-gradient-radial: radial-gradient(var(--tw-gradient-stops));
+  --background-image-gradient-conic: conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops));
+}
+
+html {
+  overflow-y: scroll;
+  scroll-behavior: smooth;
+}
+
+:root {
+  --midnight-slate: #0F172A;
+  --terracotta-clay: #B84A39;
+  --burnished-gold: #C5A059;
+  --sandstone: #F4F1EA;
+  --mortar-gray: #D1D5DB;
+
+  /* Theme variables for the dashboard/staff UI */
+  --staff-bg: var(--sandstone);
+  --staff-text: var(--midnight-slate);
+  --staff-surface: #FFFFFF;
+  --staff-surface-alt: var(--mortar-gray);
+  --staff-border: #E5E7EB;
+  --staff-muted: #6B7280;
+  --staff-accent: var(--terracotta-clay);
+}
+
+html[data-app-theme='dark'] {
+  --staff-bg: var(--midnight-slate);
+  --staff-text: var(--sandstone);
+  --staff-surface: #1E293B;
+  --staff-surface-alt: #0F172A;
+  --staff-border: rgba(255, 255, 255, 0.1);
+  --staff-muted: #9CA3AF;
+  --staff-accent: var(--burnished-gold);
+}
+
+body {
+  font-family: 'Outfit', sans-serif;
+  background-color: var(--midnight-slate); /* By default, our site is dark and premium */
+  color: var(--sandstone);
+}
+
+h1, h2, h3, h4, h5, h6, .font-playfair {
+  font-family: 'Playfair Display', serif;
+}
+
+.bg-primary {
+  background-color: var(--burnished-gold);
+}
+.text-primary {
+  color: var(--burnished-gold);
+}
+.text-secondary {
+  color: var(--mortar-gray);
+}
+.bg-background {
+  background-color: var(--midnight-slate);
+}
+
+/* Glassmorphism Classes (Bleeding Edge 2026 UX) */
+.glass-panel {
+  background: rgba(15, 23, 42, 0.65);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(197, 160, 89, 0.15); /* Subtle gold border */
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+}
+
+.glass-card-light {
+  background: rgba(244, 241, 234, 0.05);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Animations */
+.hover-lift {
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.hover-lift:hover {
+  transform: translateY(-4px) scale(1.01);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+}
+
+/* Premium Button */
+.btn-premium {
+  background: linear-gradient(135deg, var(--burnished-gold) 0%, #a68444 100%);
+  color: #fff;
+  font-weight: 600;
+  padding: 0.75rem 1.5rem;
+  border-radius: 4px; /* Slightly sharp edges for masonry feel */
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 0.875rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 15px rgba(197, 160, 89, 0.3);
+}
+.btn-premium:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(197, 160, 89, 0.5);
+  filter: brightness(1.1);
+}
+
+/* Masonry Texture Patterns */
+.texture-stone {
+  position: relative;
+  background-color: var(--midnight-slate);
+}
+.texture-stone::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: 0.03;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Custom Scrollbar Styles */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--midnight-slate);
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(197, 160, 89, 0.4);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--burnished-gold);
+}
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
