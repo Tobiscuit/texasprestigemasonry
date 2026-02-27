@@ -21,9 +21,8 @@ export function getDb() {
   // Lazy import to avoid breaking edge runtime
   const { drizzle } = require('drizzle-orm/better-sqlite3');
   const Database = require('better-sqlite3');
-  const { join } = require('path');
 
-  const dbPath = process.env.LOCAL_DB_PATH || join(process.cwd(), 'local.db');
+  const dbPath = process.env.LOCAL_DB_PATH || './local.db';
   const sqlite = new Database(dbPath);
   
   sqlite.pragma('journal_mode = WAL');

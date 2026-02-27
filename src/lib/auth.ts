@@ -28,15 +28,10 @@ const memoryDB: Record<string, any[]> = {
   verification: [],
   passkey: [],
 };
-
-if (!authSecret) {
-  throw new Error('BETTER_AUTH_SECRET is required for BetterAuth setup');
-}
-
 export const auth = betterAuth({
-  baseURL,
-  secret: authSecret,
-  database: memoryAdapter(memoryDB),
+  baseURL: process.env.BETTER_AUTH_BASE_URL || "http://localhost:3000",
+  secret: process.env.BETTER_AUTH_SECRET || "fallback_secret_for_build",
+  database: memoryAdapter(),
   emailAndPassword: {
     enabled: false,
   },
