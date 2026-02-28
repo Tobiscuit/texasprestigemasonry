@@ -17,43 +17,40 @@ const ValueStack: React.FC = () => {
       <div className="absolute top-[10%] left-[-5%] w-[400px] h-[400px] bg-terracotta-clay/10 rounded-full blur-[100px]"></div>
       
       <div className="w-full max-w-7xl mx-auto px-6 relative z-10">
-        <div className="grid lg:grid-cols-2 gap-16 items-center">
-          
-          {/* LEFT: The Proposition */}
-          <div>
-            <div className="inline-block glass-panel text-burnished-gold font-bold px-4 py-2 rounded-full mb-8 uppercase tracking-widest text-xs">
-              {t('badge') || 'The Prestige Standard'}
-            </div>
-            <h2 className="text-4xl md:text-5xl font-black mb-6 leading-tight font-playfair">
-              {t('title_1') || 'Uncompromising'}<br />
-              <span className="text-burnished-gold italic">{t('title_2') || 'Quality & Care.'}</span>
-            </h2>
-            <p className="text-lg text-mortar-gray mb-10 leading-relaxed font-light">
-              {t('desc') || 'We do not cut corners. Whether we are laying a sprawling commercial foundation or hand-carving stones for a residential fire pit, our commitment to excellence remains absolute.'}
-            </p>
-            <a href="/contact" className="inline-flex items-center text-sandstone border-b border-burnished-gold/50 pb-1 font-semibold hover:text-burnished-gold hover:border-burnished-gold transition-colors">
-              {t('sla_link') || 'Learn About Our Warranty'} <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-            </a>
-          </div>
+        
+        {/* HEADER STATEMENT */}
+        <div className="text-center max-w-4xl mx-auto mb-24">
+           <div className="inline-block glass-panel text-burnished-gold font-bold px-4 py-2 rounded-full mb-8 uppercase tracking-widest text-xs">
+              {t('badge') || 'The Prestige Process'}
+           </div>
+           <h2 className="text-5xl md:text-7xl font-black mb-8 leading-tight font-playfair">
+              {t('title_1') || 'Crafting Generations'} <span className="text-burnished-gold italic block">{t('title_2') || 'Of Stone.'}</span>
+           </h2>
+           <p className="text-xl text-mortar-gray leading-relaxed font-light max-w-3xl mx-auto">
+              {t('desc') || 'We do not cut corners. From the first architectural drafted line to the final sealing of the stone, our white-glove construction process ensures uncompromising excellence.'}
+           </p>
+        </div>
 
-          {/* RIGHT: The Stack */}
-          <div className="space-y-6">
-            {items.map((item, i) => (
-              <div key={i} className="flex items-start gap-6 glass-card-light p-6 rounded-2xl hover-lift transition-all group">
-                <div className="flex-shrink-0 w-12 h-12 rounded-full bg-burnished-gold/10 flex items-center justify-center text-burnished-gold border border-burnished-gold/20 group-hover:bg-burnished-gold group-hover:text-midnight-slate transition-colors">
-                  {item.icon === 'shield' && <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>}
-                  {item.icon === 'tag' && <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path></svg>}
-                  {item.icon === 'clock' && <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>}
-                  {item.icon === 'user' && <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>}
-                </div>
-                <div>
-                  <h3 className="font-bold text-sandstone text-xl font-playfair mb-2">{item.title}</h3>
-                  <p className="text-mortar-gray font-light leading-relaxed">{item.desc}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-
+        {/* HORIZONTAL TIMELINE */}
+        <div className="grid md:grid-cols-4 gap-12 md:gap-8 relative">
+           <div className="hidden md:block absolute top-8 left-[10%] right-[10%] h-[1px] bg-gradient-to-r from-transparent via-burnished-gold/50 to-transparent z-0"></div>
+           
+           {[
+             { step: '01', title: 'Consultation & Drafting', desc: 'On-site conceptualization and structural engineering blueprints.', icon: 'M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z' },
+             { step: '02', title: 'Material Selection', desc: 'Hand-selecting premium, climate-tested natural stone and brick.', icon: 'M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10' },
+             { step: '03', title: 'Master Construction', desc: 'Meticulous masonry by licensed, insured Texas artisans.', icon: 'M14 10l-2 1m0 0l-2-1m2 1v2.5M20 7l-2 1m2-1l-2-1m2 1v2.5M14 4l-2-1-2 1M4 7l2-1M4 7l2 1M4 7v2.5M12 21l-2-1m2 1l2-1m-2 1v-2.5M6 18l-2-1v-2.5M18 18l2-1v-2.5' },
+             { step: '04', title: 'Final Reveal', desc: 'White-glove site cleanup and comprehensive client walkthrough.', icon: 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z' }
+           ].map((phase, i) => (
+             <div key={i} className="relative z-10 flex flex-col items-center text-center group">
+               <div className="w-16 h-16 rounded-full bg-midnight-slate shadow-xl border-2 border-white/5 flex items-center justify-center text-burnished-gold group-hover:bg-burnished-gold group-hover:text-midnight-slate group-hover:scale-110 group-hover:border-burnished-gold transition-all duration-300 mb-6 relative">
+                 <div className="absolute inset-0 rounded-full bg-burnished-gold/20 animate-ping opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                 <svg className="w-6 h-6 relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d={phase.icon}></path></svg>
+               </div>
+               <div className="text-xs font-bold text-burnished-gold uppercase tracking-widest mb-3 font-playfair">{phase.step}</div>
+               <h3 className="font-bold text-sandstone text-xl font-playfair mb-3">{phase.title}</h3>
+               <p className="text-mortar-gray font-light text-sm leading-relaxed max-w-xs">{phase.desc}</p>
+             </div>
+           ))}
         </div>
       </div>
     </section>

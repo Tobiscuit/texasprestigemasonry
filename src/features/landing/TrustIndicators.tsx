@@ -45,42 +45,47 @@ const TrustIndicators: React.FC<TrustIndicatorsProps> = ({ testimonials = [] }) 
           </div>
         </div>
 
-        {/* METRICS GRID */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-24">
-          {stats.map((stat, i) => (
-            <div key={i} className="glass-card-light p-8 rounded-2xl flex flex-col justify-center text-center hover-lift transition-all">
-              <div className={`text-4xl font-playfair font-black ${stat.color} mb-2`}>{stat.value}</div>
-              <div className="text-sm text-mortar-gray font-medium uppercase tracking-widest">{stat.label}</div>
-              {stat.sub && <div className="text-xs text-white/40 mt-2 italic">{stat.sub}</div>}
-            </div>
-          ))}
+        {/* METRICS MARQUEE */}
+        <div className="w-full relative overflow-hidden mb-32 border-y border-white/5 py-12 bg-black/10">
+          <div className="flex gap-16 md:gap-32 justify-center items-center flex-wrap md:flex-nowrap">
+            {stats.map((stat, i) => (
+              <div key={i} className="flex flex-col items-center flex-shrink-0 text-center hover-lift transition-transform">
+                <div className={`text-5xl font-playfair font-black ${stat.color} mb-3 drop-shadow-lg`}>{stat.value}</div>
+                <div className="text-sm text-sandstone font-medium uppercase tracking-widest">{stat.label}</div>
+                {stat.sub && <div className="text-xs text-mortar-gray mt-2 italic">{stat.sub}</div>}
+              </div>
+            ))}
+          </div>
         </div>
 
-        {/* VERIFIED REVIEWS */}
-        <div className="grid md:grid-cols-2 gap-8">
-           {displayTestimonials.map((testimonial, i) => (
-             <div key={i} className="glass-panel p-10 rounded-3xl hover-lift transition-all duration-500 relative">
-               <div className="absolute top-8 right-10 text-6xl font-playfair text-white/5 leading-none">"</div>
-               <div className="flex justify-between items-start mb-8 relative z-10">
-                 <div className="flex gap-1 text-burnished-gold">
+        {/* SINGLE VERIFIED FOCUS TESTIMONIAL */}
+        <div className="max-w-5xl mx-auto">
+           {displayTestimonials.slice(0, 1).map((testimonial, i) => (
+             <div key={i} className="glass-panel p-12 md:p-24 rounded-[40px] relative text-center border overflow-hidden group">
+               <div className="absolute inset-0 bg-gradient-to-br from-burnished-gold/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-1000"></div>
+               <div className="absolute top-10 left-10 text-9xl font-playfair text-white/5 leading-none select-none">"</div>
+               <div className="absolute bottom-[-20px] right-10 text-9xl font-playfair text-white/5 leading-none rotate-180 select-none">"</div>
+               
+               <div className="flex justify-center mb-10 relative z-10">
+                 <div className="flex gap-2 text-burnished-gold">
                    {Array.from({ length: testimonial.rating }).map((_, star) => (
-                     <svg key={star} className="w-5 h-5 fill-current" viewBox="0 0 24 24">
+                     <svg key={star} className="w-6 h-6 fill-current drop-shadow-md" viewBox="0 0 24 24">
                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
                      </svg>
                    ))}
                  </div>
                </div>
-               <p className="text-xl font-light text-sandstone mb-10 leading-relaxed italic relative z-10">
+               
+               <p className="text-3xl md:text-5xl font-light text-sandstone mb-16 leading-relaxed italic relative z-10 font-playfair max-w-4xl mx-auto">
                  &quot;{testimonial.quote}&quot;
                </p>
-               <div className="flex items-center gap-5 pt-6 border-t border-white/10 relative z-10">
-                  <div className="w-12 h-12 rounded-full bg-burnished-gold/20 flex items-center justify-center text-burnished-gold font-bold text-lg font-playfair border border-burnished-gold/30">
+               
+               <div className="flex flex-col items-center gap-2 relative z-10">
+                  <div className="w-16 h-16 rounded-full bg-midnight-slate shadow-[0_0_20px_rgba(197,160,89,0.2)] flex items-center justify-center text-burnished-gold font-bold text-2xl font-playfair border border-burnished-gold/30 mb-4">
                     {testimonial.author.charAt(0)}
                   </div>
-                  <div>
-                    <div className="font-bold text-sandstone uppercase tracking-wide text-sm">{testimonial.author}</div>
-                    <div className="text-xs text-mortar-gray">{testimonial.location}</div>
-                  </div>
+                  <div className="font-bold text-sandstone uppercase tracking-widest text-lg">{testimonial.author}</div>
+                  <div className="text-sm text-burnished-gold italic tracking-wide">{testimonial.location}</div>
                </div>
              </div>
            ))}

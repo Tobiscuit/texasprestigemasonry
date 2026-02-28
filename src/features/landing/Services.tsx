@@ -1,6 +1,7 @@
 'use client';
 import React from 'react';
 import { useTranslations } from 'next-intl';
+import Link from 'next/link';
 
 interface ServiceFeature {
   feature: string;
@@ -51,7 +52,7 @@ const Services: React.FC<ServicesProps> = ({ services = [] }) => {
     { slug: 'kitchens', title: 'Outdoor Kitchens', category: 'Residential', description: 'Fully custom outdoor culinary spaces built with premium stone and state-of-the-art appliances.', highlight: true, icon: 'home' },
     { slug: 'pavers', title: 'Custom Pavers', category: 'Residential', description: 'Durable, beautiful paver installations for driveways, patios, and walkways.', icon: 'stone' },
     { slug: 'fire-pits', title: 'Elegant Fire Pits', category: 'Residential', description: 'Gather around a masterful stone fire pit or outdoor fireplace.', icon: 'fire' },
-    { slug: 'commercial', title: 'Commercial Brick & Block', category: 'Commercial', description: 'Structural masonry, stone repairs, and large-scale brickwork for businesses.', icon: 'stone' }
+    { slug: 'commercial', title: 'Commercial Brick & Block', category: 'Commercial', description: 'Structural masonry, custom retaining walls, and large-scale brickwork for businesses.', icon: 'stone' }
   ];
 
   return (
@@ -68,13 +69,20 @@ const Services: React.FC<ServicesProps> = ({ services = [] }) => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {displayServices.map((service, i) => (
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+          {displayServices.map((service, i) => {
+            const isFeatured = i === 0;
+            const isWide = i === 1;
+            
+            return (
             <div 
               key={service.slug}
               className={`
-                rounded-2xl p-8 transition-all duration-500 hover-lift relative overflow-hidden group flex flex-col
+                rounded-3xl p-8 transition-all duration-500 hover-lift relative overflow-hidden group flex flex-col
                 ${service.highlight ? 'glass-panel text-sandstone shadow-[0_0_40px_rgba(197,160,89,0.1)]' : 'glass-card-light text-sandstone'}
+                ${isFeatured ? 'md:col-span-2 md:row-span-2 min-h-[500px] justify-end' : ''}
+                ${isWide ? 'md:col-span-2 min-h-[240px]' : ''}
+                ${!isFeatured && !isWide ? 'md:col-span-1 min-h-[240px]' : ''}
               `}
             >
               {service.category === 'Commercial' && (
@@ -87,22 +95,23 @@ const Services: React.FC<ServicesProps> = ({ services = [] }) => {
                 {IconMap[service.icon] || IconMap.default}
               </div>
               
-              <h3 className="text-2xl font-bold mb-4 font-playfair group-hover:text-burnished-gold transition-colors">
+              <h3 className={`font-bold mb-4 font-playfair group-hover:text-burnished-gold transition-colors ${isFeatured ? 'text-4xl md:text-5xl' : 'text-2xl'}`}>
                 {service.title}
               </h3>
               
-              <p className="text-mortar-gray font-light text-sm leading-relaxed mb-8 flex-grow">
+              <p className={`text-mortar-gray font-light leading-relaxed mb-8 flex-grow ${isFeatured ? 'text-lg max-w-md' : 'text-sm'}`}>
                 {service.description}
               </p>
 
               <div className="mt-auto pt-6 border-t border-white/5 group-hover:border-burnished-gold/30 transition-colors">
-                <a href={`/contact?service=${service.slug}`} className="text-sm font-semibold uppercase tracking-wider text-burnished-gold flex items-center gap-2 group/link">
+                <Link href={`/contact?service=${service.slug}`} className="text-sm font-semibold uppercase tracking-wider text-burnished-gold flex items-center gap-2 group/link">
                   {t('cta_learn_more') || 'Request Quote'}
                   <svg className="w-4 h-4 transform group-hover/link:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
-                </a>
+                </Link>
               </div>
             </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </section>
