@@ -11,10 +11,10 @@
     "lint": "next lint",
     "type-check": "tsc --noEmit",
     "seed": "tsx src/scripts/seed.ts",
-    "pages:build": "npx @opennextjs/cloudflare build && cp .open-next/worker.js .open-next/assets/_worker.js"
+    "pages:build": "npx @opennextjs/cloudflare build"
   },
   "engines": {
-    "node": ">=25.0.0"
+    "node": ">=22.0.0"
   },
   "packageManager": "npm@11.7.0",
   "dependencies": {
