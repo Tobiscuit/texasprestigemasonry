@@ -10,25 +10,8 @@
 
 import * as schema from './schema';
 
-/**
- * Get a Drizzle database instance for local development.
- * Uses a SQLite file at the project root.
- * 
- * ⚠️ Only call this in Node.js environments (e.g., `npm run dev`).
- * Do NOT call from edge runtime.
- */
 export function getDb() {
-  // Lazy import to avoid breaking edge runtime
-  const { drizzle } = require('drizzle-orm/better-sqlite3');
-  const Database = require('better-sqlite3');
-
-  const dbPath = process.env.LOCAL_DB_PATH || './local.db';
-  const sqlite = new Database(dbPath);
-  
-  sqlite.pragma('journal_mode = WAL');
-  sqlite.pragma('foreign_keys = ON');
-  
-  return drizzle(sqlite, { schema });
+  throw new Error("Local SQLite has been removed to reduce edge bundle size. Please use getD1Db(c.env.DB) for database operations.");
 }
 
 /**
