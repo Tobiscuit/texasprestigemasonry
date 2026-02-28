@@ -12,14 +12,16 @@
 
 import { Hono } from 'hono';
 import { eq, desc } from 'drizzle-orm';
-import { getDb, schema } from '@/db/db';
+import { getD1Db, schema } from '@/db/db';
 import type { Post } from '@/types/models';
 
 const postsApp = new Hono()
 
   // List all posts (admin)
   .get('/', async (c) => {
-    const db = getDb();
+    const env = c.env as any;
+    if (!env || !env.DB) return c.json([]);
+    const db = getD1Db(env.DB);
     const results = await db
       .select()
       .from(schema.posts)
@@ -29,7 +31,9 @@ const postsApp = new Hono()
 
   // List published posts only (public-facing)
   .get('/published', async (c) => {
-    const db = getDb();
+    const env = c.env as any;
+    if (!env || !env.DB) return c.json([]);
+    const db = getD1Db(env.DB);
     const results = await db
       .select()
       .from(schema.posts)
@@ -40,7 +44,9 @@ const postsApp = new Hono()
 
   // Get post by ID
   .get('/:id', async (c) => {
-    const db = getDb();
+    const env = c.env as any;
+    if (!env || !env.DB) return c.json(null);
+    const db = getD1Db(env.DB);
     const id = c.req.param('id');
     const [post] = await db
       .select()
@@ -56,7 +62,9 @@ const postsApp = new Hono()
 
   // Create a new post
   .post('/', async (c) => {
-    const db = getDb();
+    const env = c.env as any;
+    if (!env || !env.DB) return c.json(null, 500);
+    const db = getD1Db(env.DB);
     const body = await c.req.json<Partial<Post>>();
     const id = crypto.randomUUID();
     const slug = body.slug || (body.title || '').toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, '');
@@ -86,7 +94,9 @@ const postsApp = new Hono()
 
   // Update a post
   .put('/:id', async (c) => {
-    const db = getDb();
+    const env = c.env as any;
+    if (!env || !env.DB) return c.json(null, 500);
+    const db = getD1Db(env.DB);
     const id = c.req.param('id');
     const body = await c.req.json<Partial<Post>>();
 
@@ -110,7 +120,9 @@ const postsApp = new Hono()
 
   // Delete a post
   .delete('/:id', async (c) => {
-    const db = getDb();
+    const env = c.env as any;
+    if (!env || !env.DB) return c.json(null, 500);
+    const db = getD1Db(env.DB);
     const id = c.req.param('id');
     
     await db.delete(schema.posts)

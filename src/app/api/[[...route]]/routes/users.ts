@@ -11,14 +11,16 @@
 
 import { Hono } from 'hono';
 import { eq } from 'drizzle-orm';
-import { getDb, schema } from '@/db/db';
+import { getD1Db, schema } from '@/db/db';
 import type { User } from '@/types/models';
 
 const usersApp = new Hono()
 
   // List all users
   .get('/', async (c) => {
-    const db = getDb();
+    const env = c.env as any;
+    if (!env || !env.DB) return c.json([]);
+    const db = getD1Db(env.DB);
     const results = await db
       .select()
       .from(schema.users)
@@ -28,7 +30,9 @@ const usersApp = new Hono()
 
   // Get user by ID
   .get('/:id', async (c) => {
-    const db = getDb();
+    const env = c.env as any;
+    if (!env || !env.DB) return c.json(null);
+    const db = getD1Db(env.DB);
     const id = c.req.param('id');
     const [user] = await db
       .select()
@@ -44,7 +48,9 @@ const usersApp = new Hono()
 
   // Create a new user
   .post('/', async (c) => {
-    const db = getDb();
+    const env = c.env as any;
+    if (!env || !env.DB) return c.json(null, 500);
+    const db = getD1Db(env.DB);
     const body = await c.req.json<Partial<User>>();
     const id = crypto.randomUUID();
     
@@ -69,7 +75,9 @@ const usersApp = new Hono()
 
   // Update a user
   .put('/:id', async (c) => {
-    const db = getDb();
+    const env = c.env as any;
+    if (!env || !env.DB) return c.json(null, 500);
+    const db = getD1Db(env.DB);
     const id = c.req.param('id');
     const body = await c.req.json<Partial<User>>();
 
@@ -93,7 +101,9 @@ const usersApp = new Hono()
 
   // Delete a user
   .delete('/:id', async (c) => {
-    const db = getDb();
+    const env = c.env as any;
+    if (!env || !env.DB) return c.json(null, 500);
+    const db = getD1Db(env.DB);
     const id = c.req.param('id');
     
     await db.delete(schema.users)

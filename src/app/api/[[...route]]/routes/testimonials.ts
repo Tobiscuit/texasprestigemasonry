@@ -12,14 +12,16 @@
 
 import { Hono } from 'hono';
 import { eq, desc } from 'drizzle-orm';
-import { getDb, schema } from '@/db/db';
+import { getD1Db, schema } from '@/db/db';
 import type { Testimonial } from '@/types/models';
 
 const testimonialsApp = new Hono()
 
   // List all testimonials
   .get('/', async (c) => {
-    const db = getDb();
+    const env = c.env as any;
+    if (!env || !env.DB) return c.json([]);
+    const db = getD1Db(env.DB);
     const results = await db
       .select()
       .from(schema.testimonials)
@@ -29,7 +31,9 @@ const testimonialsApp = new Hono()
 
   // List featured testimonials (public-facing)
   .get('/featured', async (c) => {
-    const db = getDb();
+    const env = c.env as any;
+    if (!env || !env.DB) return c.json([]);
+    const db = getD1Db(env.DB);
     const results = await db
       .select()
       .from(schema.testimonials)
@@ -40,7 +44,9 @@ const testimonialsApp = new Hono()
 
   // Get testimonial by ID
   .get('/:id', async (c) => {
-    const db = getDb();
+    const env = c.env as any;
+    if (!env || !env.DB) return c.json(null);
+    const db = getD1Db(env.DB);
     const id = c.req.param('id');
     const [testimonial] = await db
       .select()
@@ -56,7 +62,9 @@ const testimonialsApp = new Hono()
 
   // Create a new testimonial
   .post('/', async (c) => {
-    const db = getDb();
+    const env = c.env as any;
+    if (!env || !env.DB) return c.json(null, 500);
+    const db = getD1Db(env.DB);
     const body = await c.req.json<Partial<Testimonial>>();
     const id = crypto.randomUUID();
     
@@ -79,7 +87,9 @@ const testimonialsApp = new Hono()
 
   // Update a testimonial
   .put('/:id', async (c) => {
-    const db = getDb();
+    const env = c.env as any;
+    if (!env || !env.DB) return c.json(null, 500);
+    const db = getD1Db(env.DB);
     const id = c.req.param('id');
     const body = await c.req.json<Partial<Testimonial>>();
 
@@ -103,7 +113,9 @@ const testimonialsApp = new Hono()
 
   // Delete a testimonial
   .delete('/:id', async (c) => {
-    const db = getDb();
+    const env = c.env as any;
+    if (!env || !env.DB) return c.json(null, 500);
+    const db = getD1Db(env.DB);
     const id = c.req.param('id');
     
     await db.delete(schema.testimonials)

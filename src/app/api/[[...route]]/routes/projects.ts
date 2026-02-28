@@ -6,19 +6,21 @@
  * GET    /:id        - Get a single project by ID
  * POST   /           - Create a new project
  * PUT    /:id        - Update a project
- * DELETE /:id        - Delete a project
+ * DELETE //:id        - Delete a project
  */
 
 import { Hono } from 'hono';
-import { eq } from 'drizzle-orm';
-import { getDb, schema } from '@/db/db';
+import { eq, desc } from 'drizzle-orm';
+import { getD1Db, schema } from '@/db/db';
 import type { Project } from '@/types/models';
 
 const projectsApp = new Hono()
 
   // List all projects
   .get('/', async (c) => {
-    const db = getDb();
+    const env = c.env as any;
+    if (!env || !env.DB) return c.json([]);
+    const db = getD1Db(env.DB);
     const results = await db
       .select()
       .from(schema.projects)
@@ -28,7 +30,9 @@ const projectsApp = new Hono()
 
   // Get project by ID
   .get('/:id', async (c) => {
-    const db = getDb();
+    const env = c.env as any;
+    if (!env || !env.DB) return c.json(null);
+    const db = getD1Db(env.DB);
     const id = c.req.param('id');
     const [project] = await db
       .select()
@@ -44,7 +48,9 @@ const projectsApp = new Hono()
 
   // Create a new project
   .post('/', async (c) => {
-    const db = getDb();
+    const env = c.env as any;
+    if (!env || !env.DB) return c.json(null, 500);
+    const db = getD1Db(env.DB);
     const body = await c.req.json<Partial<Project>>();
     const id = crypto.randomUUID();
     const slug = body.slug || (body.title || '').toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, '');
@@ -77,7 +83,9 @@ const projectsApp = new Hono()
 
   // Update a project
   .put('/:id', async (c) => {
-    const db = getDb();
+    const env = c.env as any;
+    if (!env || !env.DB) return c.json(null, 500);
+    const db = getD1Db(env.DB);
     const id = c.req.param('id');
     const body = await c.req.json<Partial<Project>>();
 
@@ -101,7 +109,9 @@ const projectsApp = new Hono()
 
   // Delete a project
   .delete('/:id', async (c) => {
-    const db = getDb();
+    const env = c.env as any;
+    if (!env || !env.DB) return c.json(null, 500);
+    const db = getD1Db(env.DB);
     const id = c.req.param('id');
     
     await db.delete(schema.projects)

@@ -4,7 +4,7 @@ import { GoogleGenAI, Type, Schema } from '@google/genai';
 import { EXAMPLE_LEXICAL_STRUCTURE } from '@/lib/ai-contract';
 // import { getPayload } from 'payload';
 // import configPromise from '@payload-config';
-import sharp from 'sharp';
+// import sharp from 'sharp'; // Removed to reduce Edge bundle size
 
 const apiKey = process.env.GEMINI_API_KEY;
 const genAI = new GoogleGenAI({ apiKey: apiKey || '' });
@@ -123,9 +123,9 @@ export async function generatePostContent(prompt: string): Promise<any> {
             
             if (base64Image) {
                 const imageBuffer = Buffer.from(base64Image, 'base64');
-                const webpBuffer = await sharp(imageBuffer)
-                    .webp({ quality: 80, effort: 6 })
-                    .toBuffer();
+                // const webpBuffer = await sharp(imageBuffer)
+                //    .webp({ quality: 80, effort: 6 })
+                //    .toBuffer();
 
                 // Mock Image Save
                 featuredImageId = "mock-image-id";
