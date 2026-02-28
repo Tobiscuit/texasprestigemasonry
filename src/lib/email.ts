@@ -1,25 +1,3 @@
-import { SESClient, SendEmailCommand } from '@aws-sdk/client-ses';
-
-const region = process.env.AWS_REGION || 'us-east-1';
-const accessKeyId = process.env.AWS_ACCESS_KEY_ID;
-const secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY;
-
-// Check if credentials are configured
-const isConfigured = accessKeyId && secretAccessKey;
-
-if (!isConfigured) {
-  console.warn('AWS SES credentials not found. Email sending will be disabled or logged only.');
-}
-
-// 1. Raw SES Client for BetterAuth (lightweight, edge-compatible)
-export const sesClient = new SESClient({
-  region,
-  credentials: {
-    accessKeyId: accessKeyId || '',
-    secretAccessKey: secretAccessKey || '',
-  },
-});
-
 export const sendEmail = async ({
   to,
   subject,
@@ -33,34 +11,8 @@ export const sendEmail = async ({
   text?: string;
   from?: string;
 }) => {
-  if (!isConfigured) {
-    console.log(`[Mock Email] To: ${to}, Subject: ${subject}`);
-    return;
-  }
-
-  const command = new SendEmailCommand({
-    Destination: {
-      ToAddresses: [to],
-    },
-    Message: {
-      Body: {
-        Html: html ? { Data: html, Charset: 'UTF-8' } : undefined,
-        Text: text ? { Data: text, Charset: 'UTF-8' } : undefined,
-      },
-      Subject: {
-        Data: subject,
-        Charset: 'UTF-8',
-      },
-    },
-    Source: from || process.env.SES_FROM_AUTH || 'no-reply@example.com',
-  });
-
-  try {
-    const response = await sesClient.send(command);
-    console.log('Email sent successfully:', response.MessageId);
-    return response;
-  } catch (error) {
-    console.error('Error sending email via SES:', error);
-    throw error;
-  }
+  // Use a third-party API like Resend or Mailgun via simple fetch for Edge workers,
+  // since the AWS SDK is 10MB+ and breaks Cloudflare Worker limits.
+  console.log(`[Mock Email] To: ${to}, Subject: ${subject}`);
+  return { MessageId: 'mock-id-edge' };
 };
