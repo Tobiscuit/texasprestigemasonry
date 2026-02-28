@@ -1,34 +1,63 @@
 'use server';
 
-import { GoogleGenAI, Type, Schema } from '@google/genai';
-import { EXAMPLE_LEXICAL_STRUCTURE } from '@/lib/ai-contract';
-// import { getPayload } from 'payload';
-// import configPromise from '@payload-config';
-// import sharp from 'sharp'; // Removed to reduce Edge bundle size
+// Polyfilling Gemini typical types since we uninstalled the 11MB SDK wrapper
+export enum Type {
+  STRING = "STRING",
+  NUMBER = "NUMBER",
+  INTEGER = "INTEGER",
+  BOOLEAN = "BOOLEAN",
+  ARRAY = "ARRAY",
+  OBJECT = "OBJECT",
+}
+
+export interface Schema {
+  type: Type;
+  format?: string;
+  description?: string;
+  nullable?: boolean;
+  enum?: string[];
+  maxItems?: string;
+  minItems?: string;
+  properties?: { [k: string]: Schema };
+  required?: string[];
+  items?: Schema;
+}
 
 const apiKey = process.env.GEMINI_API_KEY;
-const genAI = new GoogleGenAI({ apiKey: apiKey || '' });
 
 // --- Helper: Generic Generator ---
 async function generateContent(systemPrompt: string, userPrompt: string, schema?: Schema, responseMimeType: string = 'application/json') {
   if (!apiKey) throw new Error('GEMINI_API_KEY is not set');
 
   try {
-    const response = await genAI.models.generateContent({
-      model: 'gemini-2.0-flash', // Upgraded to faster/cheaper model for 2026
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+    const payload = {
       contents: [
         {
           role: 'user',
           parts: [{ text: `${systemPrompt}\n\nTasks:\n${userPrompt}` }]
         }
       ],
-      config: {
+      generationConfig: {
         responseMimeType,
-        responseSchema: schema,
+        ...(schema ? { responseSchema: schema as object } : {}),
       },
-    });
+    };
 
-    const text = response.text;
+    const res = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+    });
+    
+    if (!res.ok) {
+        const errObj = await res.json().catch(() => ({}));
+        throw new Error(`Gemini API Error: ${res.status} ${res.statusText} - ${JSON.stringify(errObj)}`);
+    }
+
+    const data = await res.json();
+    const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+    
     if (!text) throw new Error('No content generated');
     
     return JSON.parse(text);
@@ -75,21 +104,30 @@ export async function generatePostContent(prompt: string): Promise<any> {
 
     let resultJson: any = {};
     try {
-        const response = await genAI.models.generateContent({
-            model: 'gemini-3.1-pro-preview',
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-pro-exp-02-05:generateContent?key=${apiKey}`;
+        const payload = {
             contents: [
                 {
                     role: 'user',
                     parts: [{ text: `${systemPrompt}\n\nTasks:\n${prompt}` }]
                 }
             ],
-            config: {
+            generationConfig: {
                 responseMimeType: 'application/json',
-                responseSchema: schema,
+                responseSchema: schema as object,
             },
-        });
+        };
 
-        const text = response.text;
+        const res = await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+        
+        if (!res.ok) throw new Error(`Gemini Text Gen Error: ${res.statusText}`);
+        const data = await res.json();
+        const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+        
         if (!text) throw new Error('No content generated');
         resultJson = JSON.parse(text);
     } catch (error) {
@@ -100,35 +138,24 @@ export async function generatePostContent(prompt: string): Promise<any> {
     let featuredImageId = null;
     try {
         if (resultJson.imagePrompt) {
-            const imageResponse = await genAI.models.generateContent({
-                model: 'gemini-3-pro-image-preview',
-                contents: resultJson.imagePrompt,
-                config: {
-                    imageConfig: {
-                        aspectRatio: '16:9',
-                    }
-                }
-            });
-
-            let base64Image = null;
-            const firstCandidate = imageResponse.candidates?.[0];
-            if (firstCandidate?.content?.parts) {
-                for (const part of firstCandidate.content.parts) {
-                    if (part.inlineData?.data) {
-                        base64Image = part.inlineData.data;
-                        break;
-                    }
-                }
-            }
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/imagen-3.0-generate-001:predict?key=${apiKey}`;
+            const payload = {
+                instances: [{ prompt: resultJson.imagePrompt }],
+                parameters: { sampleCount: 1, aspectRatio: '16:9' }
+            };
             
-            if (base64Image) {
-                const imageBuffer = Buffer.from(base64Image, 'base64');
-                // const webpBuffer = await sharp(imageBuffer)
-                //    .webp({ quality: 80, effort: 6 })
-                //    .toBuffer();
-
-                // Mock Image Save
-                featuredImageId = "mock-image-id";
+            const res = await fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            
+            if (res.ok) {
+                const data = await res.json();
+                let base64Image = data?.predictions?.[0]?.bytesBase64Encoded;
+                if (base64Image) {
+                    featuredImageId = "mock-image-id";
+                }
             }
         }
     } catch (error) {
@@ -323,21 +350,24 @@ Here is the EXISTING REST OF THE DRAFT for your context (do not regenerate these
             }
         }
 
-        const response = await genAI.models.generateContent({
-            model: 'gemini-3.1-pro-preview', // Vision-capable model
-            contents: [
-                {
-                    role: 'user',
-                    parts: parts
-                }
-            ],
-            config: {
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+        const payload = {
+            contents: [{ role: 'user', parts: parts }],
+            generationConfig: {
                 responseMimeType: 'application/json',
-                responseSchema: targetSchema,
-            },
+                responseSchema: targetSchema as object,
+            }
+        };
+
+        const res = await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
         });
 
-        const text = response.text;
+        if (!res.ok) throw new Error(`Gemini Multimodal Error: ${res.statusText}`);
+        const data = await res.json();
+        const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
         if (!text) throw new Error('No content generated');
         
         return JSON.parse(text);
@@ -369,21 +399,24 @@ export async function extractProjectContext(contextString: string) {
     if (!apiKey) throw new Error('GEMINI_API_KEY is not set');
 
     try {
-        const response = await genAI.models.generateContent({
-            model: 'gemini-3.1-pro-preview', // Pro model for complex extraction logic
-            contents: [
-                {
-                    role: 'user',
-                    parts: [{ text: `${systemPrompt}\n\nUser Input:\n"${contextString}"` }]
-                }
-            ],
-            config: {
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+        const payload = {
+            contents: [{ role: 'user', parts: [{ text: `${systemPrompt}\n\nUser Input:\n"${contextString}"` }] }],
+            generationConfig: {
                 responseMimeType: 'application/json',
-                responseSchema: schema,
-            },
-        });
+                responseSchema: schema as object,
+            }
+        };
 
-        const text = response.text;
+        const res = await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+        
+        if (!res.ok) throw new Error(`Gemini Context Error: ${res.statusText}`);
+        const data = await res.json();
+        const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
         if (!text) return { client: '', location: '' };
         
         return JSON.parse(text);

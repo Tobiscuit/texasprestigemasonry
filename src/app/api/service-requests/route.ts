@@ -1,13 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-// import { getPayload } from 'payload';
-// import configPromise from '@/payload.config';
-import { SquareClient as Client, SquareEnvironment as Environment } from 'square';
 import { randomUUID } from 'crypto';
-
-const squareClient = new Client({
-  token: process.env.SQUARE_ACCESS_TOKEN,
-  environment: process.env.SQUARE_ENVIRONMENT === 'production' ? Environment.Production : Environment.Sandbox,
-});
 
 export async function POST(req: NextRequest) {
   try {

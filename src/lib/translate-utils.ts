@@ -3,19 +3,8 @@
  * - translate(): Single text string translation via Gemini
  * - translateLexicalTree(): Deep-walks Lexical JSON AST, batches all text nodes into one API call
  */
-import { GoogleGenAI } from '@google/genai';
 
 const apiKey = process.env.GEMINI_API_KEY;
-
-// Singleton — don't create a new client per call
-let _genAI: GoogleGenAI | null = null;
-function getGenAI(): GoogleGenAI {
-  if (!_genAI) {
-    if (!apiKey) throw new Error('GEMINI_API_KEY is not set');
-    _genAI = new GoogleGenAI({ apiKey });
-  }
-  return _genAI;
-}
 
 // Delimiter for batching multiple strings into one API call
 const BATCH_DELIMITER = '\n|||SPLIT|||\n';
@@ -28,27 +17,45 @@ function getLanguageName(locale: string): string {
   }
 }
 
+async function fetchGemini(promptText: string) {
+  if (!apiKey) throw new Error('GEMINI_API_KEY is not set');
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+  const payload = {
+    contents: [{ parts: [{ text: promptText }] }]
+  };
+  
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  });
+  
+  if (!res.ok) throw new Error('Gemini API Error');
+  const data = await res.json();
+  return data?.candidates?.[0]?.content?.parts?.[0]?.text;
+}
+
 /**
  * Translate a single string from English to target language via Gemini
  */
 export async function translate(text: string, context: string, targetLocale: string = 'es'): Promise<string> {
   if (!text || text.trim().length === 0) return text;
-
-  const genAI = getGenAI();
+  
   const langName = getLanguageName(targetLocale);
-  const response = await genAI.models.generateContent({
-    model: 'gemini-2.5-flash',
-    contents: `Translate the following ${context} from English to ${langName}.
+  try {
+    const resultText = await fetchGemini(`Translate the following ${context} from English to ${langName}.
 The audience is Houston-area homeowners and contractors.
 Keep it professional, natural, and culturally appropriate.
 If the content contains HTML, preserve all HTML tags and structure exactly.
 Do NOT add any explanations — return ONLY the translated text.
 
 Content to translate:
-${text}`,
-  });
+${text}`);
 
-  return response.text?.trim() || text;
+    return resultText?.trim() || text;
+  } catch (err) {
+    return text;
+  }
 }
 
 /**
@@ -72,21 +79,22 @@ export async function translateLexicalTree(lexicalJSON: any, targetLocale: strin
   const allTexts = textNodes.map((n) => n.originalText);
   const batchInput = allTexts.join(BATCH_DELIMITER);
 
-  const genAI = getGenAI();
   const langName = getLanguageName(targetLocale);
-  const response = await genAI.models.generateContent({
-    model: 'gemini-2.5-flash',
-    contents: `Translate each of the following text segments from English to ${langName}.
+  let resultText = batchInput;
+  try {
+    const responseText = await fetchGemini(`Translate each of the following text segments from English to ${langName}.
 The audience is Houston-area homeowners and contractors.
 Keep it professional, natural, and culturally appropriate.
 IMPORTANT: The segments are separated by "|||SPLIT|||". You MUST preserve these exact delimiters in your output.
 Do NOT add explanations, numbering, or formatting — return ONLY the translated segments separated by the same "|||SPLIT|||" delimiter.
 Return EXACTLY ${allTexts.length} segments.
 
-${batchInput}`,
-  });
+${batchInput}`);
+    if (responseText) resultText = responseText.trim();
+  } catch (err) {
+    console.warn("Translation failed, preserving original text:", err);
+  }
 
-  const resultText = response.text?.trim() || batchInput;
   const translatedParts = resultText.split('|||SPLIT|||').map((s: string) => s.trim());
 
   // 3. Write translations back into the tree nodes
