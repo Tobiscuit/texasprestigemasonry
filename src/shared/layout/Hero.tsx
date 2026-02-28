@@ -16,8 +16,7 @@ const Hero: React.FC = () => {
       <div className="relative z-10 w-full max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-12 items-center">
         {/* Left Side: Typography */}
         <div className="flex flex-col items-start text-left">
-          <div className="inline-flex items-center gap-2 glass-panel text-burnished-gold px-4 py-2 rounded-full text-xs font-bold uppercase tracking-widest mb-6 hover-lift">
-            <span className="w-2 h-2 rounded-full bg-burnished-gold animate-pulse"></span>
+          <div className="inline-flex items-center gap-2 glass-panel text-burnished-gold px-4 py-2 rounded-full text-xs font-bold uppercase tracking-widest mb-6">
             {t('excellence_badge') || 'Excellence in Craftsmanship'}
           </div>
           
@@ -44,7 +43,7 @@ const Hero: React.FC = () => {
 
           <div className="mt-12 grid grid-cols-2 gap-8 pt-8 border-t border-white/10 w-full max-w-md">
             {[
-              { label: 'Commercial & Residential', value: '100%' },
+              { label: 'Coverage', value: 'Texas' },
               { label: 'Bespoke Stonework', value: 'Custom' }
             ].map((stat, idx) => (
               <div key={idx} className="flex flex-col items-start">

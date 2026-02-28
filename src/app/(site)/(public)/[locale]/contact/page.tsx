@@ -81,15 +81,15 @@ const ContactContent = () => {
                         <div className="glass-card-light rounded-[32px] shadow-2xl p-8 md:p-12 relative overflow-hidden group border border-black/5 bg-white/90 backdrop-blur-xl">
                             
                             <h2 className="text-4xl font-black text-midnight-slate mb-4 font-playfair tracking-normal relative z-10">
-                                {t('open_ticket')} || Request Blueprint Consultation
+                                {t('open_ticket')}
                             </h2>
                             <p className="text-steel-gray font-light leading-relaxed mb-10 relative z-10 text-lg">
-                                {t('ticket_desc')} || Please provide the details of your desired construction. Our master masons will review the scope and reach out to schedule an on-site evaluation.
+                                {t('ticket_desc')}
                             </p>
 
                             <form onSubmit={handleSubmit} className="space-y-6 relative z-10">
                                 <div className="space-y-2">
-                                    <label className="text-[10px] font-bold text-midnight-slate/60 uppercase tracking-widest">{t('contact_name')} || Name</label>
+                                    <label className="text-[10px] font-bold text-midnight-slate/60 uppercase tracking-widest">{t('contact_name')}</label>
                                     <input 
                                         type="text" 
                                         name="name"
@@ -125,7 +125,7 @@ const ContactContent = () => {
                                 </div>
 
                                 <div className="space-y-2">
-                                    <label className="text-[10px] font-bold text-midnight-slate/60 uppercase tracking-widest">{t('location_label')} || Build Site Address</label>
+                                    <label className="text-[10px] font-bold text-midnight-slate/60 uppercase tracking-widest">{t('location_label')}</label>
                                     <AddressAutocomplete
                                         onAddressSelect={handleAddressSelect}
                                         className="w-full bg-sandstone/50 border border-black/5 rounded-xl p-4 font-medium text-midnight-slate focus:ring-2 focus:ring-burnished-gold focus:border-transparent outline-none transition-all focus:bg-white"
@@ -135,7 +135,7 @@ const ContactContent = () => {
                                 </div>
 
                                 <div className="space-y-2">
-                                    <label className="text-[10px] font-bold text-midnight-slate/60 uppercase tracking-widest">{t('issue_label')} || Project Scope & Stone Preferences</label>
+                                    <label className="text-[10px] font-bold text-midnight-slate/60 uppercase tracking-widest">{t('issue_label')}</label>
                                     <textarea 
                                         name="project_details"
                                         rows={5}
@@ -150,11 +150,11 @@ const ContactContent = () => {
                                     type="submit" 
                                     className="w-full py-5 rounded-xl font-black text-sm uppercase tracking-widest transition-all shadow-xl hover:-translate-y-1 bg-midnight-slate hover:bg-burnished-gold text-white hover:text-midnight-slate mt-4"
                                 >
-                                    {t('submit_standard')} || Submit Blueprint Request
+                                    {t('submit_standard')}
                                 </button>
                                 
                                 <p className="text-center text-[10px] font-bold text-midnight-slate/40 uppercase tracking-widest mt-6">
-                                    {t('secure_note')} || Your information is kept strictly confidential.
+                                    {t('secure_note')}
                                 </p>
                             </form>
                         </div>
@@ -169,17 +169,17 @@ const ContactContent = () => {
                             
                             <h3 className="text-3xl font-black mb-10 relative z-10 flex items-center gap-4 font-playfair">
                                 <span className="w-1.5 h-8 bg-burnished-gold rounded-full"></span>
-                                {t('direct_contact')} || Headquarters
+                                {t('direct_contact')}
                             </h3>
                             
                             <div className="space-y-8 relative z-10">
-                                <a href="tel:832-419-1293" className="flex items-start gap-5 group cursor-pointer hover:bg-white/5 p-5 -mx-5 rounded-2xl transition-colors">
+                                <a href="tel:337-570-3004" className="flex items-start gap-5 group cursor-pointer hover:bg-white/5 p-5 -mx-5 rounded-2xl transition-colors">
                                     <div className="w-14 h-14 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-burnished-gold shrink-0 group-hover:bg-burnished-gold group-hover:text-midnight-slate transition-all shadow-lg">
                                         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
                                     </div>
                                     <div className="pt-1">
-                                        <div className="text-[10px] font-bold text-sandstone/50 uppercase tracking-widest mb-1">{t('hotline')} || Main line</div>
-                                        <div className="text-2xl font-black tracking-tight group-hover:text-burnished-gold transition-colors font-playfair">832-419-1293</div>
+                                        <div className="text-[10px] font-bold text-sandstone/50 uppercase tracking-widest mb-1">{t('hotline')}</div>
+                                        <div className="text-2xl font-black tracking-tight group-hover:text-burnished-gold transition-colors font-playfair">337-570-3004</div>
                                     </div>
                                 </a>
 
@@ -188,7 +188,7 @@ const ContactContent = () => {
                                         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
                                     </div>
                                     <div className="pt-1">
-                                        <div className="text-[10px] font-bold text-sandstone/50 uppercase tracking-widest mb-1">{t('email_support')} || Email</div>
+                                        <div className="text-[10px] font-bold text-sandstone/50 uppercase tracking-widest mb-1">{t('email_support')}</div>
                                         <div className="text-lg font-light leading-snug group-hover:text-burnished-gold transition-colors">office@<br/>texasprestigemasonry.com</div>
                                     </div>
                                 </a>

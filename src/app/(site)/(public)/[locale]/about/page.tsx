@@ -40,12 +40,12 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
             <div className="container mx-auto px-6 relative z-10 text-center">
                 <div className="max-w-4xl mx-auto">
                     <div className="inline-flex items-center gap-2 bg-burnished-gold/10 border border-burnished-gold/30 text-burnished-gold px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest mb-10">
-                        {t('since')} || Est. Texas
+                        {t('since')}
                     </div>
                     <h1 className="text-5xl md:text-8xl font-black leading-tight mb-8 font-playfair tracking-normal">
-                        {t('heading_1')} || Forged in <br/>
+                        {t('heading_1')} <br/>
                         <span className="text-burnished-gold italic">
-                            {t('heading_2')} || Fire & Stone
+                            {t('heading_2')}
                         </span>
                     </h1>
                     <p className="text-xl md:text-2xl text-sandstone max-w-3xl mx-auto leading-relaxed font-light mt-12 pb-8 border-b border-white/10">
@@ -73,9 +73,9 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
                 <div className="flex flex-col lg:flex-row gap-20 items-start">
                     <div className="lg:w-1/3 sticky top-32">
                         <div className="w-16 h-1 bg-burnished-gold mb-8"></div>
-                        <h2 className="text-5xl font-black text-midnight-slate mb-6 font-playfair leading-tight">{t('standard_heading')} || The Prestige Standard</h2>
+                        <h2 className="text-5xl font-black text-midnight-slate mb-6 font-playfair leading-tight">{t('standard_heading')}</h2>
                         <p className="text-mortar-gray text-xl font-light">
-                            {t('standard_desc')} || We do not compromise. Our name is carved into the quality of our work.
+                            {t('standard_desc')}
                         </p>
                     </div>
                     
@@ -101,7 +101,7 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
         {/* TRUST / CERTIFICATIONS */}
         <section className="bg-midnight-slate py-32 px-6 border-t border-white/5 texture-stone">
             <div className="container mx-auto text-center max-w-5xl">
-                <h2 className="text-4xl md:text-5xl font-black text-sandstone mb-16 font-playfair">{t('licensed_heading')} || Assured & Insured Quality</h2>
+                <h2 className="text-4xl md:text-5xl font-black text-sandstone mb-16 font-playfair">{t('licensed_heading')}</h2>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8">
                     <div className="glass-card-light p-8 rounded-3xl flex flex-col justify-center items-center h-56 hover-lift border border-white/5">
                         <svg className="w-10 h-10 text-burnished-gold mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M9 12l2 2 4-4L15 9V3H9zm6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
@@ -129,9 +129,9 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
 
         {/* CTA */}
         <section className="bg-sandstone py-24 px-6 text-center">
-             <h2 className="text-midnight-slate text-4xl md:text-5xl font-black mb-10 font-playfair">{t('cta_heading')} || Ready to Break Ground?</h2>
+             <h2 className="text-midnight-slate text-4xl md:text-5xl font-black mb-10 font-playfair">{t('cta_heading')}</h2>
              <Link href="/contact" className="inline-block bg-midnight-slate hover:bg-burnished-gold text-white hover:text-midnight-slate font-black py-5 px-12 rounded-xl transition-all transform hover:-translate-y-1 shadow-2xl uppercase tracking-widest text-sm">
-                {t('cta_button')} || Schedule Consultation
+                {t('cta_button')}
              </Link>
         </section>
 

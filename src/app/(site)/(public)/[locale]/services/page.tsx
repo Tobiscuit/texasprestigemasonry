@@ -43,16 +43,16 @@ export default async function ServicesPage({ params }: { params: Promise<{ local
             <div className="container mx-auto px-6 relative z-10">
                 <div className="max-w-3xl">
                     <div className="inline-flex items-center gap-2 bg-burnished-gold/10 border border-burnished-gold/20 text-burnished-gold px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest mb-8">
-                        {t('expert_craft')} || Master Artisans
+                        {t('expert_craft')}
                     </div>
                     <h1 className="text-5xl md:text-7xl font-black leading-tight mb-8 font-playfair">
-                        {t('new_title')} || Architectural <span className="text-transparent bg-clip-text bg-gradient-to-r from-burnished-gold to-white italic">Stone & Brick</span>
+                        {t('new_title')} <span className="text-transparent bg-clip-text bg-gradient-to-r from-burnished-gold to-white italic">Stone & Brick</span>
                     </h1>
                     <p className="text-mortar-gray text-xl md:text-2xl mb-10 font-light max-w-2xl leading-relaxed">
-                        {t('new_desc')} || Providing unmatched structural integrity and bespoke aesthetic design for Texas's finest residential and commercial properties.
+                        {t('new_desc')}
                     </p>
                     <Link href="/contact" className="inline-flex items-center text-sandstone border-b border-burnished-gold/50 pb-1 font-semibold hover:text-burnished-gold hover:border-burnished-gold transition-colors tracking-wider uppercase text-sm">
-                        {t('start_project')} || Consult with our draftsmen <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        {t('start_project')} <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
                     </Link>
                 </div>
             </div>
@@ -62,9 +62,9 @@ export default async function ServicesPage({ params }: { params: Promise<{ local
         <section className="py-32 bg-sandstone px-6 border-t border-white/10 texture-stone relative">
             <div className="container mx-auto relative z-10">
                 <div className="max-w-3xl mb-20 text-center mx-auto">
-                    <h2 className="text-midnight-slate text-4xl md:text-5xl font-black mb-6 font-playfair">{t('capabilities_heading')} || Core Capabilities</h2>
-                    <p className="text-steel-gray text-lg font-light">
-                        {t('capabilities_desc')} || Precision engineering meets generations of stonework tradition. We specialize strictly in premium new installations.
+                    <h2 className="text-sandstone text-4xl md:text-5xl font-black mb-6 font-playfair">{t('capabilities_heading')}</h2>
+                    <p className="text-mortar-gray text-lg font-light">
+                        {t('capabilities_desc')}
                     </p>
                 </div>
 
@@ -88,7 +88,7 @@ export default async function ServicesPage({ params }: { params: Promise<{ local
 
                             <div className={`mt-auto pt-8 border-t ${service.highlight ? 'border-midnight-slate/10' : 'border-black/5'}`}>
                                 <Link href={`/contact?service=${service.slug}`} className={`text-sm font-black uppercase tracking-widest flex items-center gap-2 group/link ${service.highlight ? 'text-midnight-slate' : 'text-burnished-gold'}`}>
-                                    {t('configure_service')} || Learn More
+                                    {t('configure_service')}
                                     <svg className="w-5 h-5 transform group-hover/link:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
                                 </Link>
                             </div>
