@@ -14,7 +14,7 @@ export default async function BlogIndex({ params }: { params: Promise<{ locale: 
     const posts: any = { docs: [] };
 
     return (
-        <div className="bg-sandstone min-h-screen pb-24 font-work-sans">
+        <div className="min-h-screen pb-24">
             {/* Hero Section - Keeps the Dark Industrial Look for Contrast */}
             <div className="relative bg-midnight-slate border-b border-white/10 overflow-hidden">
                 <div className="absolute inset-0 bg-[url('/grid-pattern.svg')] opacity-10"></div>
@@ -27,7 +27,7 @@ export default async function BlogIndex({ params }: { params: Promise<{ locale: 
                             </span>
                         </div>
                         <h1 className="text-5xl md:text-7xl font-black text-white uppercase tracking-tighter mb-8 leading-none">
-                            {t('heading')} <span className="text-transparent bg-clip-text bg-gradient-to-r from-burnished-gold to-yellow-600">{t('heading_accent')}</span>
+                            {t('heading')} <span className="text-transparent bg-clip-text bg-gradient-to-r from-burnished-gold to-[#a68444]">{t('heading_accent')}</span>
                         </h1>
                         <p className="text-xl text-gray-400 max-w-2xl leading-relaxed">
                             {t('subheading')}
@@ -42,12 +42,12 @@ export default async function BlogIndex({ params }: { params: Promise<{ locale: 
             {/* Content Grid */}
             <div className="container mx-auto px-4 py-16">
                 {posts.docs.length === 0 ? (
-                    <div className="text-center py-20 bg-white rounded-3xl border border-gray-200 shadow-xl">
-                        <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                            <svg className="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path></svg>
+                    <div className="text-center py-20 glass-panel rounded-3xl shadow-xl">
+                        <div className="w-20 h-20 bg-white/5 border border-white/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                            <svg className="w-10 h-10 text-mortar-gray/70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path></svg>
                         </div>
-                        <h3 className="text-2xl font-bold text-midnight-slate mb-2">{t('no_articles')}</h3>
-                        <p className="text-gray-500">{t('check_back')}</p>
+                        <h3 className="text-2xl font-bold text-sandstone mb-2">{t('no_articles')}</h3>
+                        <p className="text-mortar-gray">{t('check_back')}</p>
                     </div>
                 ) : (
                     <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -55,7 +55,7 @@ export default async function BlogIndex({ params }: { params: Promise<{ locale: 
                             <SmartLink 
                                 key={post.id} 
                                 href={`/blog/${post.slug}`}
-                                className="group bg-white border border-gray-100 hover:border-burnished-gold/50 rounded-2xl overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl flex flex-col h-full"
+                                className="group glass-panel hover:border-burnished-gold/50 rounded-2xl overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl flex flex-col h-full"
                             >
                                 {/* Image Container */}
                                 <div className="aspect-video relative bg-midnight-slate overflow-hidden">
@@ -83,17 +83,17 @@ export default async function BlogIndex({ params }: { params: Promise<{ locale: 
 
                                 {/* Content */}
                                 <div className="p-8 flex flex-col flex-grow">
-                                    <div className="flex items-center gap-3 mb-4 text-xs font-mono text-gray-400">
+                                    <div className="flex items-center gap-3 mb-4 text-xs font-mono text-mortar-gray/70">
                                         <span>{new Date(post.publishedAt || post.createdAt || Date.now()).toLocaleDateString()}</span>
-                                        <span className="w-1 h-1 bg-gray-300 rounded-full"></span>
+                                        <span className="w-1 h-1 bg-white/20 rounded-full"></span>
                                         <span>{t('min_read')}</span>
                                     </div>
 
-                                    <h2 className="text-2xl font-bold text-midnight-slate mb-4 leading-tight group-hover:text-burnished-gold transition-colors">
+                                    <h2 className="text-2xl font-bold text-sandstone mb-4 leading-tight group-hover:text-burnished-gold transition-colors">
                                         {post.title}
                                     </h2>
                                     
-                                    <p className="text-gray-600 text-sm leading-relaxed mb-6 flex-grow line-clamp-3">
+                                    <p className="text-mortar-gray text-sm leading-relaxed mb-6 flex-grow line-clamp-3">
                                         {post.excerpt}
                                     </p>
 

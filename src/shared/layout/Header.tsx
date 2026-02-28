@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useTranslations } from 'next-intl';
+import { ThemeSwitcher } from '@/shared/ui/ThemeSwitcher';
 
 const Header: React.FC = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -54,6 +55,7 @@ const Header: React.FC = () => {
 
           {/* DESKTOP ACTIONS */}
           <div className="hidden md:flex items-center gap-4">
+            <ThemeSwitcher />
             <Link href="/contact" className="btn-premium text-xs">
               {t('free_estimate') || 'Free Estimate'}
             </Link>
@@ -99,6 +101,9 @@ const Header: React.FC = () => {
             </Link>
           ))}
           <div className="h-px w-20 mx-auto bg-white/10 my-4"></div>
+          <div className="flex justify-center mb-4">
+            <ThemeSwitcher />
+          </div>
           <Link href="/contact" onClick={() => setIsMobileMenuOpen(false)} className="btn-premium mx-auto">
             {t('free_estimate') || 'Free Estimate'}
           </Link>

@@ -55,6 +55,7 @@ export const metadata: Metadata = {
 }
 
 import { PwaRegistry } from '@/components/PwaRegistry';
+import { ThemeProvider } from '@/components/theme-provider';
 
 export default async function RootLayout({
   children,
@@ -66,8 +67,10 @@ export default async function RootLayout({
   return (
     <html lang={locale} suppressHydrationWarning>
       <body className={`${inter.className} bg-background text-primary`}>
-        {children}
-        <PwaRegistry />
+        <ThemeProvider attribute="data-app-theme" defaultTheme="dark" enableSystem>
+          {children}
+          <PwaRegistry />
+        </ThemeProvider>
       </body>
     </html>
   )

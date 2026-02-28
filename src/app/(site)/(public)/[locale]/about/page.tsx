@@ -25,7 +25,7 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
   };
 
   return (
-    <div className="min-h-screen bg-sandstone font-work-sans text-midnight-slate flex flex-col">
+    <div className="min-h-screen flex flex-col">
       
       {/* HERO: Heritage Story */}
       <section className="bg-midnight-slate text-white pt-48 pb-32 relative overflow-hidden min-h-[60vh] flex flex-col justify-center border-b border-white/10">
@@ -73,7 +73,7 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
                 <div className="flex flex-col lg:flex-row gap-20 items-start">
                     <div className="lg:w-1/3 sticky top-32">
                         <div className="w-16 h-1 bg-burnished-gold mb-8"></div>
-                        <h2 className="text-5xl font-black text-midnight-slate mb-6 font-playfair leading-tight">{t('standard_heading')}</h2>
+                        <h2 className="text-5xl font-black text-white mb-6 font-playfair leading-tight">{t('standard_heading')}</h2>
                         <p className="text-mortar-gray text-xl font-light">
                             {t('standard_desc')}
                         </p>
@@ -86,8 +86,8 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
                                     0{index + 1}
                                 </div>
                                 <div className="pt-2">
-                                    <h3 className="text-3xl font-black text-midnight-slate mb-4 font-playfair">{value.title}</h3>
-                                    <p className="text-steel-gray leading-relaxed text-lg font-light">
+                                    <h3 className="text-3xl font-black text-sandstone mb-4 font-playfair">{value.title}</h3>
+                                    <p className="text-mortar-gray leading-relaxed text-lg font-light">
                                         {value.description}
                                     </p>
                                 </div>
@@ -128,9 +128,9 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
         </section>
 
         {/* CTA */}
-        <section className="bg-sandstone py-24 px-6 text-center">
-             <h2 className="text-midnight-slate text-4xl md:text-5xl font-black mb-10 font-playfair">{t('cta_heading')}</h2>
-             <Link href="/contact" className="inline-block bg-midnight-slate hover:bg-burnished-gold text-white hover:text-midnight-slate font-black py-5 px-12 rounded-xl transition-all transform hover:-translate-y-1 shadow-2xl uppercase tracking-widest text-sm">
+        <section className="bg-midnight-slate py-24 px-6 text-center border-t border-white/5 texture-stone">
+             <h2 className="text-sandstone text-4xl md:text-5xl font-black mb-10 font-playfair">{t('cta_heading')}</h2>
+             <Link href="/contact" className="inline-block btn-premium transition-all transform hover:-translate-y-1 shadow-2xl">
                 {t('cta_button')}
              </Link>
         </section>

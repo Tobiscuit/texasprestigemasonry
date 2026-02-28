@@ -4,11 +4,11 @@
 
 @theme {
   /* Texas Prestige Masonry Colors */
-  --color-midnight-slate: #0F172A;
-  --color-terracotta-clay: #B84A39;
-  --color-burnished-gold: #C5A059;
-  --color-sandstone: #F4F1EA;
-  --color-mortar-gray: #D1D5DB;
+  --color-midnight-slate: var(--midnight-slate);
+  --color-terracotta-clay: var(--terracotta-clay);
+  --color-burnished-gold: var(--burnished-gold);
+  --color-sandstone: var(--sandstone);
+  --color-mortar-gray: var(--mortar-gray);
   
   --font-outfit: 'Outfit', sans-serif;
   --font-playfair: 'Playfair Display', serif;
@@ -37,6 +37,16 @@ html {
   --staff-border: #E5E7EB;
   --staff-muted: #6B7280;
   --staff-accent: var(--terracotta-clay);
+}
+
+[data-app-theme='light'] {
+  --midnight-slate: #F4F1EA;
+  --sandstone: #0F172A;
+  --mortar-gray: #4B5563;
+
+  /* Light mode overrides for structural elements if needed */
+  background-color: var(--midnight-slate);
+  color: var(--sandstone);
 }
 
 html[data-app-theme='dark'] {
