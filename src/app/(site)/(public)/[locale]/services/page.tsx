@@ -1,21 +1,20 @@
 import React from 'react';
 import { getTranslations } from 'next-intl/server';
+import Link from 'next/link';
 
 // Icon mapping helper
 const getIcon = (iconName: string, highlight: boolean) => {
-  const className = `w-8 h-8 ${highlight ? 'text-red-400' : 'text-burnished-gold'}`; // Default colors, adjusted below per icon
+  const className = `w-8 h-8 ${highlight ? 'text-midnight-slate' : 'text-burnished-gold'}`;
   
   switch (iconName) {
-    case 'lightning': // Repair
-      return <svg className="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>;
-    case 'building': // Install
-      return <svg className="w-8 h-8 text-burnished-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>;
-    case 'clipboard': // Maintenance
-      return <svg className="w-8 h-8 text-burnished-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2-2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>;
-    case 'phone': // Automation
-      return <svg className="w-8 h-8 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>;
+    case 'fire':
+      return <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 7.143 10.857c0 0 .5-3 3-5 .5 3 2.5 4 4 6 1 1 2 2.5 2 4a3.5 3.5 0 01-1 3.2v.057z" /></svg>;
+    case 'stone':
+      return <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M4 6h16M4 10h16M4 14h16M4 18h16" /></svg>;
+    case 'home':
+      return <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>;
     default:
-      return <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg>;
+      return <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M5 13l4 4L19 7"></path></svg>;
   }
 };
 
@@ -25,124 +24,79 @@ export default async function ServicesPage({ params }: { params: Promise<{ local
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: 'services_page' });
   
-  // Fallback while API is being rebuilt
-  const services: any[] = [];
+  // High fidelity default data if DB is empty or during redesign
+  const services = [
+    { slug: 'kitchens', title: 'Outdoor Kitchens', category: 'Residential', description: 'Fully custom outdoor culinary spaces built with premium stone and state-of-the-art appliances.', highlight: true, icon: 'home', features: [{feature: 'Custom Grills & Smokers'}, {feature: 'Stone Prep Surfaces'}, {feature: 'Integrated Fire Features'}] },
+    { slug: 'pavers', title: 'Custom Pavers', category: 'Residential', description: 'Durable, beautiful paver installations for driveways, patios, and walkways.', icon: 'stone', features: [{feature: 'Travertine & Slate'}, {feature: 'Cobblestone Driveways'}, {feature: 'Pool Decking'}] },
+    { slug: 'fire-pits', title: 'Elegant Fire Pits', category: 'Residential', description: 'Gather around a masterful stone fire pit or outdoor fireplace.', icon: 'fire', features: [{feature: 'Wood Burning'}, {feature: 'Gas Inserts'}, {feature: 'Custom Seating Walls'}] },
+    { slug: 'commercial', title: 'Commercial Block', category: 'Commercial', description: 'Structural masonry, custom retaining walls, and large-scale brickwork for businesses.', icon: 'stone', features: [{feature: 'Structural CMU'}, {feature: 'Dumpster Enclosures'}, {feature: 'Brick Veneer'}] }
+  ];
 
   return (
     <div className="min-h-screen bg-sandstone font-work-sans">
       
-      {/* BIFURCATED HERO: Services Edition */}
-      <section className="relative flex flex-col md:flex-row text-white overflow-hidden font-display min-h-[60vh]">
-            {/* LEFT: URGENT */}
-            <div className="relative w-full md:w-1/2 bg-midnight-slate flex flex-col justify-center px-8 md:px-16 pt-48 pb-20 border-r border-white/5">
-                <div className="absolute inset-0 opacity-5" style={{ backgroundImage: 'radial-gradient(#ffffff 1px, transparent 1px)', backgroundSize: '16px 16px' }}></div>
-                <div className="relative z-10">
-                    <div className="inline-flex items-center gap-2 bg-red-500/10 border border-red-500/20 text-red-400 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider mb-6">
-                        {t('rapid_response')}
+      {/* UNIFIED HERO: Master Craftsmanship */}
+      <section className="relative bg-midnight-slate text-white overflow-hidden min-h-[50vh] flex flex-col justify-center py-24">
+            <div className="absolute inset-0 opacity-10 blur-xl" style={{ backgroundImage: 'radial-gradient(circle at 100% 0%, rgba(197, 160, 89, 0.4) 0%, transparent 60%)' }}></div>
+            <div className="absolute inset-0 opacity-5" style={{ backgroundImage: 'repeating-linear-gradient(45deg, #000 0, #000 1px, transparent 0, transparent 50%)', backgroundSize: '20px 20px' }}></div>
+            
+            <div className="container mx-auto px-6 relative z-10">
+                <div className="max-w-3xl">
+                    <div className="inline-flex items-center gap-2 bg-burnished-gold/10 border border-burnished-gold/20 text-burnished-gold px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest mb-8">
+                        {t('expert_craft')} || Master Artisans
                     </div>
-                    <h1 className="text-4xl md:text-5xl font-black leading-tight mb-4">
-                        {t('broken_title')} <span className="text-red-500">{t('broken_accent')}</span>
+                    <h1 className="text-5xl md:text-7xl font-black leading-tight mb-8 font-playfair">
+                        {t('new_title')} || Architectural <span className="text-transparent bg-clip-text bg-gradient-to-r from-burnished-gold to-white italic">Stone & Brick</span>
                     </h1>
-                    <p className="text-gray-400 text-lg mb-8 max-w-sm">
-                        {t('broken_desc')}
+                    <p className="text-mortar-gray text-xl md:text-2xl mb-10 font-light max-w-2xl leading-relaxed">
+                        {t('new_desc')} || Providing unmatched structural integrity and bespoke aesthetic design for Texas's finest residential and commercial properties.
                     </p>
-                    <a href="/contact?type=repair" className="inline-flex items-center gap-2 bg-red-600 hover:bg-red-500 text-white font-bold py-3 px-6 rounded-lg transition-all">
-                        {t('dispatch_cta')}
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-                    </a>
-                </div>
-            </div>
-
-            {/* RIGHT: PLANNED */}
-            <div className="relative w-full md:w-1/2 bg-midnight-slate flex flex-col justify-center px-8 md:px-16 pt-48 pb-20">
-                <div className="absolute inset-0 opacity-5" style={{ backgroundImage: 'radial-gradient(#f1c40f 1px, transparent 1px)', backgroundSize: '24px 24px' }}></div>
-                <div className="relative z-10">
-                    <div className="inline-flex items-center gap-2 bg-burnished-gold/10 border border-burnished-gold/20 text-burnished-gold px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider mb-6">
-                        {t('project_design')}
-                    </div>
-                    <h1 className="text-4xl md:text-5xl font-black leading-tight mb-4">
-                        {t('new_title')} <span className="text-burnished-gold">{t('new_accent')}</span>
-                    </h1>
-                    <p className="text-gray-400 text-lg mb-8 max-w-sm">
-                        {t('new_desc')}
-                    </p>
-                    <a href="/contact?type=install" className="inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white font-bold py-3 px-6 rounded-lg transition-all border border-white/10">
-                        {t('start_project')}
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
-                    </a>
+                    <Link href="/contact" className="inline-flex items-center text-sandstone border-b border-burnished-gold/50 pb-1 font-semibold hover:text-burnished-gold hover:border-burnished-gold transition-colors tracking-wider uppercase text-sm">
+                        {t('start_project')} || Consult with our draftsmen <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                    </Link>
                 </div>
             </div>
         </section>
 
-        {/* SERVICE MATRIX (Bento Grid) */}
-        <section className="py-24 bg-sandstone px-6">
-            <div className="container mx-auto">
-                <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
-                    <div>
-                        <h2 className="text-midnight-slate text-4xl font-black mb-4">{t('capabilities_heading')}</h2>
-                        <p className="text-steel-gray max-w-xl text-lg">
-                            {t('capabilities_desc')}
-                        </p>
-                    </div>
-                    <div className="hidden md:block">
-                         <div className="text-right">
-                            <div className="text-3xl font-black text-midnight-slate">{t('repairs_stat')}</div>
-                            <div className="text-sm font-bold text-steel-gray uppercase tracking-wider">{t('repairs_label')}</div>
-                         </div>
-                    </div>
+        {/* SERVICE MATRIX (Luxury Grid) */}
+        <section className="py-32 bg-sandstone px-6 border-t border-white/10 texture-stone relative">
+            <div className="container mx-auto relative z-10">
+                <div className="max-w-3xl mb-20 text-center mx-auto">
+                    <h2 className="text-midnight-slate text-4xl md:text-5xl font-black mb-6 font-playfair">{t('capabilities_heading')} || Core Capabilities</h2>
+                    <p className="text-steel-gray text-lg font-light">
+                        {t('capabilities_desc')} || Precision engineering meets generations of stonework tradition. We specialize strictly in premium new installations.
+                    </p>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                     {services.map((service, index) => (
-                        <div key={index} className={`group relative p-8 rounded-2xl transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl ${service.highlight ? 'bg-midnight-slate text-white ring-4 ring-midnight-slate/10' : 'bg-white text-midnight-slate shadow-lg border border-gray-100'}`}>
+                        <div key={index} className={`group relative p-10 rounded-[32px] transition-all duration-500 hover:-translate-y-2 flex flex-col ${service.highlight ? 'bg-burnished-gold text-midnight-slate shadow-xl' : 'glass-card-light bg-white/70 text-midnight-slate border border-black/5 hover:border-burnished-gold/30 shadow-lg'}`}>
                             
-                            <div className="flex justify-between items-start mb-8">
-                                <div className={`p-3 rounded-lg ${service.highlight ? 'bg-white/10' : 'bg-gray-50'}`}>
+                            <div className="flex justify-between items-start mb-10">
+                                <div className={`w-16 h-16 rounded-full flex items-center justify-center ${service.highlight ? 'bg-midnight-slate shadow-lg' : 'bg-midnight-slate/5 border border-black/5 shadow-inner group-hover:bg-burnished-gold/10 transition-colors'}`}>
                                     {getIcon(service.icon, service.highlight || false)}
                                 </div>
-                                <span className={`text-xs font-bold uppercase tracking-wider py-1 px-2 rounded ${service.highlight ? 'bg-white/10 text-gray-300' : 'bg-gray-100 text-gray-500'}`}>
+                                <span className={`text-[10px] font-bold uppercase tracking-widest py-1.5 px-3 rounded-full ${service.highlight ? 'bg-midnight-slate/10 text-midnight-slate border border-midnight-slate/20' : 'bg-black/5 text-steel-gray'}`}>
                                     {service.category}
                                 </span>
                             </div>
 
-                            <h3 className="text-2xl font-bold mb-3">{service.title}</h3>
-                            <p className={`mb-8 leading-relaxed ${service.highlight ? 'text-gray-400' : 'text-steel-gray'}`}>
+                            <h3 className="text-3xl font-black mb-4 font-playfair">{service.title}</h3>
+                            <p className={`mb-10 font-light leading-relaxed flex-grow ${service.highlight ? 'text-midnight-slate/80' : 'text-steel-gray'}`}>
                                 {service.description}
                             </p>
 
-                            <ul className="space-y-3 mb-8">
-                                {service.features?.map((item: any, i: number) => (
-                                    <li key={i} className="flex items-center gap-3 text-sm font-medium">
-                                        <div className={`w-1.5 h-1.5 rounded-full ${service.highlight ? 'bg-burnished-gold' : 'bg-midnight-slate'}`}></div>
-                                        <span className={service.highlight ? 'text-gray-300' : 'text-gray-600'}>{item.feature}</span>
-                                    </li>
-                                ))}
-                            </ul>
-
-                            <a href={`/contact?service=${service.slug}`} className={`absolute bottom-8 left-8 right-8 py-3 text-center rounded-lg font-bold transition-colors ${service.highlight ? 'bg-burnished-gold text-midnight-slate hover:bg-white' : 'bg-gray-50 text-midnight-slate hover:bg-gray-100'}`}>
-                                {t('configure_service')}
-                            </a>
-                             {/* Spacer for button */}
-                             <div className="h-12"></div>
+                            <div className={`mt-auto pt-8 border-t ${service.highlight ? 'border-midnight-slate/10' : 'border-black/5'}`}>
+                                <Link href={`/contact?service=${service.slug}`} className={`text-sm font-black uppercase tracking-widest flex items-center gap-2 group/link ${service.highlight ? 'text-midnight-slate' : 'text-burnished-gold'}`}>
+                                    {t('configure_service')} || Learn More
+                                    <svg className="w-5 h-5 transform group-hover/link:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
+                                </Link>
+                            </div>
                         </div>
                     ))}
                 </div>
             </div>
         </section>
-
-        {/* TRUST BANNER */}
-        <section className="bg-midnight-slate py-16 border-t border-white/10">
-            <div className="container mx-auto px-6 text-center">
-                <p className="text-gray-400 font-bold uppercase tracking-widest text-sm mb-8">{t('dealer_heading')}</p>
-                <div className="flex flex-wrap justify-center items-center gap-12 md:gap-24 opacity-60">
-                    <span className="text-2xl font-black text-white">LIFTMASTER</span>
-                    <span className="text-2xl font-black text-white">CHAMBERLAIN</span>
-                    <span className="text-2xl font-black text-white">AMARR</span>
-                    <span className="text-2xl font-black text-white">CLOPAY</span>
-                </div>
-            </div>
-        </section>
-
     </div>
   );
 }
