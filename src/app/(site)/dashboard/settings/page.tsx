@@ -5,7 +5,7 @@ import SettingsForm from '@/features/admin/settings/SettingsForm';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Site Settings | Mobil Garage Dashboard',
+  title: 'Site Settings | Texas Prestige Masonry Dashboard',
 };
 
 export default async function SettingsPage() {

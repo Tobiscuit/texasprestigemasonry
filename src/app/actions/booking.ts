@@ -11,7 +11,7 @@ import webpush from 'web-push';
 try {
     if (process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY && process.env.VAPID_PRIVATE_KEY) {
         webpush.setVapidDetails(
-            'mailto:admin@mobilegaragedoor.com',
+            'mailto:office@texasprestigemasonry.com',
             process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY,
             process.env.VAPID_PRIVATE_KEY
         );

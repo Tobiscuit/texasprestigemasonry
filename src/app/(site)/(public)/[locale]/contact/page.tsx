@@ -246,13 +246,13 @@ const ContactContent = () => {
                                     </div>
                                 </a>
 
-                                <a href="mailto:dispatch@mobilgarage.com" className="flex items-start gap-4 group cursor-pointer hover:bg-white/5 p-4 -mx-4 rounded-xl transition-colors">
+                                <a href="mailto:office@texasprestigemasonry.com" className="flex items-start gap-4 group cursor-pointer hover:bg-white/5 p-4 -mx-4 rounded-xl transition-colors">
                                     <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center text-burnished-gold shrink-0 group-hover:bg-burnished-gold group-hover:text-midnight-slate transition-all">
                                         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
                                     </div>
                                     <div>
                                         <div className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">{t('email_support')}</div>
-                                        <div className="text-lg font-medium group-hover:text-burnished-gold transition-colors">dispatch@mobilgarage.com</div>
+                                        <div className="text-lg font-medium group-hover:text-burnished-gold transition-colors">office@texasprestigemasonry.com</div>
                                     </div>
                                 </a>
                             </div>

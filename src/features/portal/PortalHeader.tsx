@@ -20,7 +20,7 @@ export function PortalHeader({ customerName, isBuilder }: PortalHeaderProps) {
           <p className="text-gray-400 font-medium">
             {isBuilder 
                 ? 'Manage active job sites, schedules, and billing.'
-                : 'Manage your garage service requests and view history.'}
+                : 'Manage your masonry service requests and view history.'}
           </p>
         </div>
         <Link

@@ -74,7 +74,7 @@ export function DispatchClient({ jobs, technicians }: { jobs: any[], technicians
                                         <span className={`px-3 py-1 rounded-md text-xs font-bold uppercase tracking-wide border ${
                                             job.urgency === 'emergency' 
                                                 ? 'bg-red-500/10 text-red-400 border-red-500/20' 
-                                                : 'bg-blue-500/10 text-blue-400 border-blue-500/20'
+                                                : 'bg-amber-500/10 text-amber-400 border-amber-500/20'
                                         }`}>
                                             {job.urgency} Priority
                                         </span>

@@ -129,7 +129,7 @@ export default function TechnicianClient({ user }: { user: any }) {
                     jobs.map(job => (
                         <div key={job.id} className="bg-white/10 rounded-2xl p-5 border border-white/10 hover:bg-white/15 transition-all">
                             <div className="flex justify-between items-start mb-3">
-                                <span className={`px-2 py-1 rounded text-[10px] font-black uppercase tracking-wide ${job.urgency === 'Emergency' ? 'bg-red-500/20 text-red-400 border border-red-500/30' : 'bg-blue-500/20 text-blue-400 border border-blue-500/30'}`}>
+                                <span className={`px-2 py-1 rounded text-[10px] font-black uppercase tracking-wide ${job.urgency === 'Emergency' ? 'bg-red-500/20 text-red-400 border border-red-500/30' : 'bg-amber-500/20 text-amber-400 border border-amber-500/30'}`}>
                                     {job.urgency}
                                 </span>
                                 <span className="text-xs font-mono text-gray-400">{job.ticketId}</span>

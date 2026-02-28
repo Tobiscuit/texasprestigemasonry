@@ -44,7 +44,7 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
                         </span>
                     </h1>
                     <p className="text-xl text-gray-300 max-w-2xl leading-relaxed">
-                        {settings.missionStatement || "Founded on the principle that a garage door is the primary moving part of your home's security envelope. We engineer reliability into every install."}
+                        {settings.missionStatement || "Founded on the principle that masterful masonry is the foundation of a lasting legacy. We engineer enduring beauty and structural integrity into every stone we lay."}
                     </p>
                 </div>
             </div>

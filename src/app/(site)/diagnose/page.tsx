@@ -5,9 +5,9 @@ import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 
 const UI_STRINGS: Record<string, { initialMessage: string; startButton: string; permissionPrompt: string; heading: string; exitLabel: string }> = {
-  en: { initialMessage: "I'm listening. Point your camera at the garage door.", startButton: 'Start Diagnostic', permissionPrompt: 'I need to <strong>see</strong> and <strong>hear</strong> your garage door.', heading: "Let's see what's wrong.", exitLabel: 'Exit' },
-  es: { initialMessage: 'Estoy escuchando. Apunte la cámara a la puerta del garaje.', startButton: 'Iniciar Diagnóstico', permissionPrompt: 'Necesito <strong>ver</strong> y <strong>escuchar</strong> su puerta de garaje.', heading: 'Veamos qué pasa.', exitLabel: 'Salir' },
-  vi: { initialMessage: 'Tôi đang lắng nghe. Hãy hướng camera vào cửa ga-ra.', startButton: 'Bắt đầu Chẩn đoán', permissionPrompt: 'Tôi cần <strong>nhìn</strong> và <strong>nghe</strong> cửa ga-ra của bạn.', heading: 'Hãy xem có vấn đề gì.', exitLabel: 'Thoát' },
+  en: { initialMessage: "I'm listening. Point your camera at the masonry issue.", startButton: 'Start Diagnostic', permissionPrompt: 'I need to <strong>see</strong> and <strong>hear</strong> your issue.', heading: "Let's see what's wrong.", exitLabel: 'Exit' },
+  es: { initialMessage: 'Estoy escuchando. Apunte la cámara al problema.', startButton: 'Iniciar Diagnóstico', permissionPrompt: 'Necesito <strong>ver</strong> y <strong>escuchar</strong> el problema.', heading: 'Veamos qué pasa.', exitLabel: 'Salir' },
+  vi: { initialMessage: 'Tôi đang lắng nghe. Hãy hướng camera vào khu vực gặp vấn đề.', startButton: 'Bắt đầu Chẩn đoán', permissionPrompt: 'Tôi cần <strong>nhìn</strong> và <strong>nghe</strong> vấn đề của bạn.', heading: 'Hãy xem có vấn đề gì.', exitLabel: 'Thoát' },
 };
 
 export default function DiagnosePage() {
@@ -148,7 +148,7 @@ export default function DiagnosePage() {
                       clientContent: {
                         turns: [{
                           role: "user",
-                          parts: [{ text: "[The customer has connected and pointed their camera at the garage door. Greet them warmly and begin your visual inspection.]" }]
+                          parts: [{ text: "[The customer has connected and pointed their camera at the masonry issue. Greet them warmly and begin your visual inspection.]" }]
                         }],
                         turnComplete: true
                       }

@@ -29,7 +29,7 @@ export function IssueStep({ formData, updateField, nextStep, prevStep }: IssueSt
         <div className="grid grid-cols-2 gap-4">
           <button
             onClick={() => updateField('urgency', 'standard')}
-            className={`p-4 rounded-xl border-2 text-left transition-all ${formData.urgency === 'standard' ? 'border-midnight-slate bg-blue-50/50 ring-2 ring-midnight-slate' : 'border-gray-100 hover:border-gray-300'}`}
+            className={`p-4 rounded-xl border-2 text-left transition-all ${formData.urgency === 'standard' ? 'border-midnight-slate bg-white/5 ring-2 ring-midnight-slate' : 'border-gray-100 hover:border-gray-300'}`}
           >
             <div className="font-bold text-midnight-slate">{t('standard')}</div>
             <div className="text-xs text-gray-500">{t('standard_desc')}</div>

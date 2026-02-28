@@ -1,0 +1,3 @@
+module.exports=[35112,(a,b,c)=>{"use strict";b.exports=a.r(42602).vendored["react-ssr"].ReactDOM},15186,(a,b,c)=>{"use strict";c._=function(a){return a&&a.__esModule?a:{default:a}}},92966,(a,b,c)=>{"use strict";b.exports=a.r(42602).vendored.contexts.HeadManagerContext},84644,a=>{"use strict";var b=a.i(87924),c=a.i(38246),d=a.i(50944);function e({children:a,prefetchPriority:e="high",...f}){let g=(0,d.useRouter)();return(0,b.jsx)(c.default,{...f,onMouseEnter:()=>{"high"===e&&g.prefetch(String(f.href))},onTouchStart:()=>{g.prefetch(String(f.href))},children:a})}a.s(["default",()=>e])}];
+
+//# sourceMappingURL=_e6733694._.js.map

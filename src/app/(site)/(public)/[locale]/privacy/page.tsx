@@ -68,7 +68,7 @@ export default async function PrivacyPolicy({ params }: { params: Promise<{ loca
           <div className="bg-gray-50 p-8 rounded-2xl mt-12 border border-gray-100">
             <h3 className="text-lg font-bold text-midnight-slate mb-2">{t('contact_title')}</h3>
             <p>
-              {t('contact_text')} <a href="mailto:privacy@mobilegaragedoor.com" className="text-burnished-gold font-bold hover:underline">privacy@mobilegaragedoor.com</a>.
+              {t('contact_text')} <a href="mailto:privacy@texasprestigemasonry.com" className="text-burnished-gold font-bold hover:underline">privacy@texasprestigemasonry.com</a>.
             </p>
           </div>
         </div>

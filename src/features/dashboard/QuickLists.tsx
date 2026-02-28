@@ -25,7 +25,7 @@ export function ActiveJobsList() {
           <div className="flex justify-between items-start mb-2">
             <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider
               ${job.status === 'pending' ? 'bg-yellow-500/20 text-yellow-400' : ''}
-              ${job.status === 'confirmed' ? 'bg-blue-500/20 text-blue-400' : ''}
+              ${job.status === 'confirmed' ? 'bg-amber-500/20 text-amber-400' : ''}
               ${job.status === 'dispatched' ? 'bg-purple-500/20 text-purple-400' : ''}
               ${job.status === 'on_site' ? 'bg-green-500/20 text-green-400' : ''}
             `}>

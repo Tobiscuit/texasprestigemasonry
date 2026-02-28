@@ -69,7 +69,7 @@ export default function MissionControl() {
                             <div className="flex justify-between items-start mb-4">
                                 <div className="flex items-center gap-3">
                                     <span className={`px-3 py-1 rounded-full text-xs font-black uppercase tracking-wide 
-                                        ${job.urgency === 'emergency' ? 'bg-red-500/20 text-red-400 animate-pulse' : 'bg-blue-500/20 text-blue-400'}`}>
+                                        ${job.urgency === 'emergency' ? 'bg-red-500/20 text-red-400 animate-pulse' : 'bg-amber-500/20 text-amber-400'}`}>
                                         {job.urgency}
                                     </span>
                                     <span className="font-mono text-gray-500 text-sm">#{job.ticketId}</span>

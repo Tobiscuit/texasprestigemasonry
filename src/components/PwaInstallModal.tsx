@@ -18,7 +18,7 @@ export function PwaInstallModal({ show, onClose, onInstall, platform }: PwaInsta
       <div className="relative w-full max-w-md bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl shadow-2xl overflow-hidden p-8 text-center">
         {/* Glow effect */}
         <div className="absolute -top-24 -left-24 w-48 h-48 bg-[#f1c40f]/20 blur-[100px] rounded-full" />
-        <div className="absolute -bottom-24 -right-24 w-48 h-48 bg-blue-500/10 blur-[100px] rounded-full" />
+        <div className="absolute -bottom-24 -right-24 w-48 h-48 bg-[#f1c40f]/10 blur-[100px] rounded-full" />
 
         <div className="relative">
           {/* Guardian Icon */}
@@ -36,7 +36,7 @@ export function PwaInstallModal({ show, onClose, onInstall, platform }: PwaInsta
           </h2>
           <p className="text-gray-300 mb-8 leading-relaxed">
             {platform === 'ios' 
-              ? 'Install the Mobile Garage Door app for 30-day persistence and faster field access.'
+              ? 'Install the Texas Prestige Masonry app for 30-day persistence and faster field access.'
               : 'Unlock the full native experience with instant notifications and persistent sessions.'}
           </p>
 
@@ -44,11 +44,11 @@ export function PwaInstallModal({ show, onClose, onInstall, platform }: PwaInsta
             <div className="space-y-6 text-left bg-black/20 rounded-2xl p-4 border border-white/5">
               <div className="flex items-center gap-4">
                 <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-[#f1c40f] font-bold">1</div>
-                <p className="text-sm text-gray-200">Tap the <span className="text-blue-400 font-bold">Share</span> menu below.</p>
+                <p className="text-sm text-gray-200">Tap the <span className="text-[#f1c40f] font-bold">Share</span> menu below.</p>
               </div>
               <div className="flex items-center gap-4">
                 <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-[#f1c40f] font-bold">2</div>
-                <p className="text-sm text-gray-200">Scroll down and select <span className="text-blue-400 font-bold">"Add to Home Screen"</span>.</p>
+                <p className="text-sm text-gray-200">Scroll down and select <span className="text-[#f1c40f] font-bold">"Add to Home Screen"</span>.</p>
               </div>
               
               {/* Pointing animation */}

@@ -89,7 +89,7 @@ export async function generatePostContent(prompt: string): Promise<any> {
     };
 
     const systemPrompt = `
-        You are an expert blog post writer for a Garage Door Service company.
+        You are an expert blog post writer for a high-end Masonry company.
         Generate a detailed, SEO-friendly blog post based on the user's prompt.
         
         INSTRUCTIONS:
@@ -198,11 +198,11 @@ export async function generateEmailDrafts(threadContext: { id: string, from: str
     };
 
     const systemPrompt = `
-        You are "Service Hero", a 20-year veteran Garage Door Technician and Support Specialist.
+        You are "Service Hero", a 20-year veteran Masonry Foreman and Support Specialist.
         Your goal is to draft replies to customer emails that are helpful, professional, and drive bookings.
         
         CONTEXT:
-        ${transcript}
+        \${transcript}
         
         INSTRUCTIONS:
         1. Analyze the conversation history strictly to understand the customer's issue and previous interactions.
@@ -215,7 +215,7 @@ export async function generateEmailDrafts(threadContext: { id: string, from: str
         - Use <p> for paragraphs.
         - Use <ul>/<li> for lists.
         - Do NOT include <html> or <body> tags.
-        - Sign off as "The Mobile Garage Door Team".
+        - Sign off as "The Texas Prestige Masonry Team".
     `;
 
     const result = await generateContent(systemPrompt, "Draft 3 options based on the transcript.", schema);
@@ -239,7 +239,7 @@ export async function generateProjectCaseStudy(prompt: string) {
     };
 
     const systemPrompt = `
-        You are a Senior Project Manager for a high-end Garage Door Installation company.
+        You are a Senior Project Manager for a high-end Masonry company.
         Create a detailed Case Study based on the user's rough notes.
         
         INSTRUCTIONS:
@@ -248,7 +248,7 @@ export async function generateProjectCaseStudy(prompt: string) {
         3.  **Content (HTML):**
             -   **Description:** The main story. Use <p>, <b>, <ul>. Professional tone.
             -   **Challenge:** What was broken, difficult, or unique?
-            -   **Solution:** What products/methods did we use? (e.g. "High-cycle springs", "Insulated steel panels").
+            -   **Solution:** What products/methods did we use? (e.g. "Custom tumbled stone", "Architectural block").
         
         Ensure the HTML is clean (no <html>/<body> tags), just semantic block elements.
     `;
@@ -286,18 +286,18 @@ export async function generateMultimodalProjectCaseStudy(
     } : fullSchema;
 
     const basePrompt = `
-        You are a Senior Project Manager and Master Garage Door Technician.
+        You are a Senior Project Manager and Master Mason.
         Write a highly technical, SEO-optimized Project Case Study in semantic HTML based on the provided before/after photos and context notes.
         
         INSTRUCTIONS:
-        1. Analyze the provided photos to identify hardware, damage, and solutions.
+        1. Analyze the provided photos to identify materials, damage, and solutions.
         2. Read the attached captions for context.
         3.  **Title:** compelling and descriptive.
         4.  **Client/Location:** Infer from context or use realistic placeholders (e.g. "Private Residence").
         5.  **Content (HTML):**
             -   **Description:** The main story. Use <p>, <b>, <ul>. Professional tone.
             -   **Challenge:** What was broken, difficult, or unique?
-            -   **Solution:** What hardware/methods did we use? Be technical (e.g. "High-cycle springs", "16-gauge hinges").
+            -   **Solution:** What materials/methods did we use? Be technical (e.g. "Natural dry-stack veneer", "Type S Mortar").
         
         Ensure the HTML is clean (no <html>/<body> tags), just semantic block elements.
     `;

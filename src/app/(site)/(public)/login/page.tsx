@@ -32,7 +32,7 @@ export default function LoginPage() {
       <main className="flex-grow flex items-center justify-center px-6 py-24">
         <div className="w-full max-w-md bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100">
           <div className="bg-midnight-slate p-8 text-center">
-            <h1 className="text-3xl font-black text-white mb-2">My Garage Portal</h1>
+            <h1 className="text-3xl font-black text-white mb-2">Masonry Client Portal</h1>
             <p className="text-gray-400 text-sm">Customers, builders, and staff all sign in here.</p>
           </div>
           
