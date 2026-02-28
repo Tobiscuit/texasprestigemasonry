@@ -33,7 +33,7 @@ export const auth = betterAuth({
   secret: process.env.BETTER_AUTH_SECRET || "fallback_secret_for_build",
   database: memoryAdapter(memoryDB),
   emailAndPassword: {
-    enabled: false,
+    enabled: true,
   },
   socialProviders: {
     google: {

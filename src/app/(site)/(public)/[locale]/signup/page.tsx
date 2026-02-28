@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { authClient } from '@/lib/auth-client';
 
 export default function SignupPage() {
   const router = useRouter();
@@ -35,7 +36,20 @@ export default function SignupPage() {
     }
 
     try {
-      // Use Users collection (unified IAM)
+      // 1. Register and sign in with Better Auth
+      const { data: authData, error: authError } = await authClient.signUp.email({
+        email: formData.email,
+        password: formData.password,
+        name: formData.name,
+      });
+
+      if (authError) {
+        setError(authError.message || 'Registration failed.');
+        setLoading(false);
+        return;
+      }
+
+      // 2. Save business profile to D1 (Users collection)
       const res = await fetch('/api/users', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -46,26 +60,14 @@ export default function SignupPage() {
             phone: formData.phone,
             customerType: formData.isBuilder ? 'builder' : 'residential',
             companyName: formData.isBuilder ? formData.companyName : undefined,
-            // role: 'customer' is enforced by default in Users collection
         }),
       });
 
       if (res.ok) {
-        // Signup successful, now login automatically
-        const loginRes = await fetch('/api/users/login', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email: formData.email, password: formData.password }),
-        });
-        
-        if (loginRes.ok) {
-            router.push('/portal');
-        } else {
-            router.push('/login?success=registered');
-        }
+        router.push('/dashboard');
       } else {
         const err = await res.json();
-        setError(err.errors?.[0]?.message || 'Registration failed.');
+        setError(err.errors?.[0]?.message || 'Profile creation failed.');
       }
     } catch (err) {
       setError('Something went wrong. Please try again.');
