@@ -23,15 +23,15 @@ export default {
         // Expose a manual trigger for local dev/testing
         const url = new URL(request.url);
         if (url.pathname === "/test-seo") {
-             ctx.waitUntil(this.scheduled(null as any, env, ctx));
-             return new Response("Triggering manual SEO Engine test in background...", { status: 200 });
+            ctx.waitUntil(this.scheduled(null as any, env, ctx));
+            return new Response("Triggering manual SEO Engine test in background...", { status: 200 });
         }
         return new Response("Not Found", { status: 404 });
     },
 
     async scheduled(event: ScheduledEvent, env: Env, ctx: ExecutionContext) {
         console.log("Starting Autonomous SEO Engine...");
-        
+
         if (!env.GEMINI_API_KEY || !env.CMS_API_URL) {
             console.error("Missing critical environment variables: GEMINI_API_KEY or CMS_API_URL");
             return;
@@ -40,9 +40,9 @@ export default {
         try {
             // STEP 1: Ideation (Seed Topics MVP)
             const seedTopics = [
-                "Houston heat impact on garage door tension springs",
-                "Why Wayne Dalton doors struggle with Texas humidity",
-                "LiftMaster vs Chamberlain: Best for coastal regions"
+                "Best materials for outdoor kitchens in Texas heat",
+                "How to choose pavers for a Houston patio",
+                "Brick vs block: Which is better for Texas construction projects"
             ];
             const targetTopic = seedTopics[Math.floor(Math.random() * seedTopics.length)];
             console.log(`[Ideation] Selected target topic: ${targetTopic}`);
@@ -56,7 +56,7 @@ export default {
 
             // Query Vector DB for similarity
             const queryVector = await env.VECTOR_INDEX.query(topicHash, { topK: 1 });
-            
+
             if (queryVector.matches.length > 0 && queryVector.matches[0].score > 0.88) {
                 console.log(`[Oracle] Topic rejected. Too similar to existing ID: ${queryVector.matches[0].id} (Score: ${queryVector.matches[0].score})`);
                 return;
@@ -65,7 +65,7 @@ export default {
 
             // STEP 3: The Writer (Generation Agent via Gemini API)
             console.log(`[Writer] Drafting article with gemini-3.1-pro (fallback: 3.0-pro)...`); // Using 3.0-pro as stable fallback
-            const writerPrompt = `You are a master Garage Door Technician based in Texas. Write a highly informative, SEO-optimized blog post on the topic: "${targetTopic}".
+            const writerPrompt = `You are a master Mason with 20+ years of experience in Texas, specializing in outdoor kitchens, pavers, chimneys, and stone work. Write a highly informative, SEO-optimized blog post on the topic: "${targetTopic}".
             
 CRITICAL INSTRUCTIONS:
 1. Zero Fluff: Start immediately with the core insight. No conversational prefaces like 'Here is the article'.
@@ -88,12 +88,12 @@ Return a JSON object matching this schema exactly.`;
                             excerpt: { type: "STRING", description: "1-2 sentence hook" },
                             htmlContent: { type: "STRING", description: "The full semantic HTML string of the article body" },
                             category: { type: "STRING", enum: ["repair-tips", "product-spotlight", "contractor-insights", "maintenance-guide", "industry-news"] },
-                            keywords: { 
-                                type: "ARRAY", 
-                                items: { 
-                                    type: "OBJECT", 
-                                    properties: { keyword: { type: "STRING" } } 
-                                } 
+                            keywords: {
+                                type: "ARRAY",
+                                items: {
+                                    type: "OBJECT",
+                                    properties: { keyword: { type: "STRING" } }
+                                }
                             }
                         },
                         required: ["title", "slug", "excerpt", "htmlContent", "category", "keywords"]
@@ -108,15 +108,15 @@ Return a JSON object matching this schema exactly.`;
             });
 
             const data: any = await response.json();
-            
+
             if (!response.ok || !data.candidates || data.candidates.length === 0) {
-                 console.error("[Writer] Gemini API Error:", data);
-                 return;
+                console.error("[Writer] Gemini API Error:", data);
+                return;
             }
 
             const payloadText = data.candidates[0].content.parts[0].text;
             const articleData = JSON.parse(payloadText);
-            
+
             const finalPayload: AutonomousBlogPostPayload = {
                 ...articleData,
                 status: "published",
@@ -125,7 +125,7 @@ Return a JSON object matching this schema exactly.`;
 
             // STEP 4: The Publisher (PayloadCMS Injection)
             console.log(`[Publisher] Pushing ${finalPayload.slug} to PayloadCMS API: ${env.CMS_API_URL}`);
-            
+
             const cmsResponse = await fetch(env.CMS_API_URL, {
                 method: "POST",
                 headers: {
@@ -136,9 +136,9 @@ Return a JSON object matching this schema exactly.`;
             });
 
             if (!cmsResponse.ok) {
-                 const errText = await cmsResponse.text();
-                 console.error("[Publisher] CMS Error:", errText);
-                 return;
+                const errText = await cmsResponse.text();
+                console.error("[Publisher] CMS Error:", errText);
+                return;
             }
 
             // STEP 5: Memory Write

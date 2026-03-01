@@ -20,62 +20,62 @@ const seed = async () => {
   // SERVICES
   // ============================================
   const existingServices = await payload.find({ collection: 'services', limit: 1 });
-  
+
   if (existingServices.docs.length === 0) {
     console.log('📦 Seeding services...');
-    
+
     const services = [
       {
-        title: 'Precision Repair',
-        slug: 'precision-repair',
-        category: 'Critical Response',
-        description: "Diagnostic-first approach to broken springs, cables, and openers. We carry 98% of parts on our trucks.",
+        title: 'Outdoor Kitchens',
+        slug: 'outdoor-kitchens',
+        category: 'Premium Build',
+        description: "Custom-designed outdoor kitchen structures built from premium stone, brick, and concrete. Built to endure Texas summers.",
         features: [
-          { feature: 'Torsion Spring Replacement' },
-          { feature: 'Cable Reset & Spooling' },
-          { feature: 'Sensor Alignment' },
+          { feature: 'Custom Stone & Brick Work' },
+          { feature: 'Grill & Appliance Integration' },
+          { feature: 'Countertop & Finish Selection' },
         ],
         icon: 'lightning',
         highlight: true,
         order: 1,
       },
       {
-        title: 'Modern Installation',
-        slug: 'modern-installation',
-        category: 'Architecture',
-        description: "Complete entryway transformation. We install high-R-value insulated doors that withstand local weather extremes.",
+        title: 'Custom Pavers',
+        slug: 'custom-pavers',
+        category: 'Hardscaping',
+        description: "Driveways, patios, and walkways installed with precision-laid pavers. Built to last generations without cracking or shifting.",
         features: [
-          { feature: 'Custom Sizing' },
-          { feature: 'Smart Opener Integration' },
-          { feature: 'Old Door Haul-Away' },
+          { feature: 'Concrete & Natural Stone Pavers' },
+          { feature: 'Pattern Design & Layout' },
+          { feature: 'Sealing & Long-Term Protection' },
         ],
         icon: 'building',
         highlight: false,
         order: 2,
       },
       {
-        title: 'Annual Tune-Up',
-        slug: 'annual-tune-up',
-        category: 'Preventative',
-        description: "The '25-Point Safety Inspection' that extends the life of your system and prevents guaranteed failure points.",
+        title: 'Chimneys & Fire Pits',
+        slug: 'chimneys-fire-pits',
+        category: 'Fire Features',
+        description: "From rustic fire pits to full masonry chimneys. Our craftsmen build structures that age beautifully and burn safely.",
         features: [
-          { feature: 'Lube & Balance' },
-          { feature: 'Roller Inspection' },
-          { feature: 'Safety Reverse Test' },
+          { feature: 'Chimney Repair & Rebuild' },
+          { feature: 'Custom Fire Pit Design' },
+          { feature: 'Fireplace Stone Surrounds' },
         ],
         icon: 'clipboard',
         highlight: false,
         order: 3,
       },
       {
-        title: 'Automation & WiFi',
-        slug: 'automation-wifi',
-        category: 'Smart Home',
-        description: "Open your door from your phone. Integration with HomeKit, Alexa, and Google Home.",
+        title: 'Brick & Block Work',
+        slug: 'brick-block-work',
+        category: 'Structural',
+        description: "Structural masonry for residential and commercial properties. Expert tuck-pointing, repair, and new construction.",
         features: [
-          { feature: 'MyQ Setup' },
-          { feature: 'Camera Installation' },
-          { feature: 'Keypad Programming' },
+          { feature: 'Foundation & Retaining Walls' },
+          { feature: 'Tuck-Pointing & Repair' },
+          { feature: 'Commercial Structural Block' },
         ],
         icon: 'phone',
         highlight: false,
@@ -95,106 +95,50 @@ const seed = async () => {
   // PROJECTS
   // ============================================
   const existingProjects = await payload.find({ collection: 'projects', limit: 1 });
-  
+
   if (existingProjects.docs.length === 0) {
     console.log('📦 Seeding projects...');
-    
+
     const projects = [
       {
-        title: 'Logistics Hub: High-Speed Door Deployment',
-        slug: 'commercial-fleet-hq',
-        client: 'Regional Distribution Center',
-        location: 'Industrial Park, Sector 4',
-        description: {
-          root: {
-            type: 'root',
-            children: [
-              {
-                type: 'paragraph',
-                children: [{ type: 'text', text: 'Replaced failing chain-link gates with high-speed, insulated steel sectional doors. Integrated with facility management software for automated access control.' }],
-              },
-            ],
-          },
-        },
-        imageStyle: 'garage-pattern-steel',
-        tags: [{ tag: 'Commercial' }, { tag: 'Automation' }, { tag: 'Security' }],
-        stats: [
-          { label: 'Install Time', value: '6 Hours' },
-          { label: 'Efficiency Gain', value: '+40%' },
-          { label: 'Cycle Rating', value: '100k' },
-        ],
-      },
-      {
-        title: 'Estate Modernization: Glass & Aluminum',
-        slug: 'residential-modern-glass',
+        title: 'Highland Homes: Premium Outdoor Kitchen',
+        slug: 'highland-homes-outdoor-kitchen',
         client: 'Private Residence',
-        location: 'Highland Estates',
-        description: {
-          root: {
-            type: 'root',
-            children: [
-              {
-                type: 'paragraph',
-                children: [{ type: 'text', text: 'Custom-fabricated aluminum frame with tempered frosted glass. Complete tear-out of 1980s wood doors. Smart opener integration with geofencing.' }],
-              },
-            ],
-          },
-        },
-        imageStyle: 'garage-pattern-glass',
-        tags: [{ tag: 'Residential' }, { tag: 'Design' }, { tag: 'Smart Home' }],
-        stats: [
-          { label: 'Curb Appeal', value: 'Max' },
-          { label: 'R-Value', value: '12.9' },
-          { label: 'Warranty', value: 'Lifetime' },
-        ],
+        location: 'Highland Park, Dallas',
+        description: { root: { type: 'root', children: [{ type: 'paragraph', children: [{ type: 'text', text: 'Full outdoor kitchen build with custom granite countertops, built-in grill station, and a stacked stone surround. Completed in 3 weeks to deadline for a summer housewarming.' }] }] } },
+        imageStyle: 'stone-outdoor-kitchen',
+        tags: [{ tag: 'Outdoor Kitchen' }, { tag: 'Stone Work' }, { tag: 'Custom' }],
+        stats: [{ label: 'Build Time', value: '3 Weeks' }, { label: 'Sq Ft', value: '420' }, { label: 'Materials', value: 'Granite + Limestone' }],
       },
       {
-        title: 'Historic Preservation: Carriage House',
-        slug: 'carriage-house-retro',
-        client: 'Heritage Trust',
-        location: 'Old Town District',
-        description: {
-          root: {
-            type: 'root',
-            children: [
-              {
-                type: 'paragraph',
-                children: [{ type: 'text', text: 'Synthetic composite overlay that mimics 100-year-old wood but requires zero staining. Silent belt-drive openers installed to protect fragile structure.' }],
-              },
-            ],
-          },
-        },
-        imageStyle: 'garage-pattern-carriage',
-        tags: [{ tag: 'Restoration' }, { tag: 'Custom' }, { tag: 'Quiet' }],
-        stats: [
-          { label: 'Style Match', value: '100%' },
-          { label: 'Noise Reduction', value: '-25dB' },
-          { label: 'Maintenance', value: 'Zero' },
-        ],
+        title: 'Westlake Driveway: Travertine Paver Redesign',
+        slug: 'westlake-travertine-pavers',
+        client: 'Private Residence',
+        location: 'Westlake, TX',
+        description: { root: { type: 'root', children: [{ type: 'paragraph', children: [{ type: 'text', text: 'Replaced cracking concrete driveway with precision-laid travertine pavers. Includes sealed edge borders and a matching patio expansion.' }] }] } },
+        imageStyle: 'paver-driveway',
+        tags: [{ tag: 'Pavers' }, { tag: 'Driveway' }, { tag: 'Travertine' }],
+        stats: [{ label: 'Sq Ft', value: '1,800' }, { label: 'Lifespan', value: '50+ Yrs' }, { label: 'Seal Warranty', value: '10 Yrs' }],
       },
       {
-        title: 'Critical Failure: Torsion Spring Snap',
-        slug: 'emergency-spring-replacement',
-        client: 'Emergency Call',
-        location: 'Suburban Multi-Car',
-        description: {
-          root: {
-            type: 'root',
-            children: [
-              {
-                type: 'paragraph',
-                children: [{ type: 'text', text: 'Vehicle trapped inside. Rapid response team arrived within the hour. Converted hazardous extension springs to safe, high-cycle torsion system.' }],
-              },
-            ],
-          },
-        },
-        imageStyle: 'garage-pattern-modern',
-        tags: [{ tag: 'Repair' }, { tag: 'Emergency' }, { tag: 'Safety' }],
-        stats: [
-          { label: 'Response', value: '45 Min' },
-          { label: 'Fix Time', value: '1 Hour' },
-          { label: 'Safety Rating', value: 'Pass' },
-        ],
+        title: 'Lakeway Custom Fire Pit & Chimney',
+        slug: 'lakeway-fire-pit-chimney',
+        client: 'Private Estate',
+        location: 'Lakeway, TX',
+        description: { root: { type: 'root', children: [{ type: 'paragraph', children: [{ type: 'text', text: 'Custom-built flagstone fire pit with a matching outdoor fireplace and chimney. All built from the same locally-quarried Texas limestone for a cohesive, natural aesthetic.' }] }] } },
+        imageStyle: 'fire-pit-stone',
+        tags: [{ tag: 'Fire Pit' }, { tag: 'Chimney' }, { tag: 'Limestone' }],
+        stats: [{ label: 'Stone Type', value: 'Texas Limestone' }, { label: 'BTU Rating', value: 'Certified' }, { label: 'Year', value: '2025' }],
+      },
+      {
+        title: 'Commercial Brick Repair: Downtown Austin',
+        slug: 'downtown-austin-brick-repair',
+        client: 'Commercial Property',
+        location: 'Downtown Austin, TX',
+        description: { root: { type: 'root', children: [{ type: 'paragraph', children: [{ type: 'text', text: 'Full facade tuck-pointing and historic brick repair on a 1940s commercial building. Matched the original mortar color and texture to preserve historical integrity.' }] }] } },
+        imageStyle: 'brick-commercial',
+        tags: [{ tag: 'Commercial' }, { tag: 'Brick Repair' }, { tag: 'Historic' }],
+        stats: [{ label: 'Response', value: '48 Hours' }, { label: 'Brick Matched', value: '100%' }, { label: 'Warranty', value: '5 Yrs' }],
       },
     ];
 
@@ -210,50 +154,48 @@ const seed = async () => {
   // SITE SETTINGS
   // ============================================
   console.log('📦 Updating site settings...');
-  
+
   await payload.updateGlobal({
     slug: 'site-settings',
     data: {
-      companyName: 'Mobile Garage Door Pros',
-      phone: '(555) 000-0000',
-      email: 'service@mobilegaragedoor.com',
-      licenseNumber: 'CA LIC #1045678',
+      companyName: 'Texas Prestige Masonry',
+      phone: '(512) 555-0000',
+      email: 'hello@texasprestigemasonry.com',
+      licenseNumber: 'TX LIC #12345',
       insuranceAmount: '$2M Policy',
       bbbRating: 'A+',
-      missionStatement: 'To provide fast, honest, and expert garage door service to every homeowner and contractor in our community—ensuring no one is ever left stranded with a broken door.',
+      missionStatement: 'To build lasting legacy through premium masonry craftsmanship—elevating Texas properties with stonework built to endure generations.',
       stats: [
-        { value: '15+', label: 'Years in Service' },
-        { value: '5,000+', label: 'Repairs Completed' },
-        { value: '98%', label: 'Customer Satisfaction' },
-        { value: '24/7', label: 'Emergency Response' },
+        { value: '45+', label: 'Years Combined Experience' },
+        { value: '1,200+', label: 'Projects Completed' },
+        { value: '100%', label: 'Texas Coverage' },
+        { value: '5★', label: 'Google Rating' },
       ],
       values: [
-        { title: 'Reliability', description: 'We show up when we say we will. No excuses, no delays.' },
+        { title: 'Craftsmanship', description: 'Every project is built like it will last 100 years. Because it will.' },
         { title: 'Transparency', description: 'Upfront pricing. No hidden fees. What we quote is what you pay.' },
-        { title: 'Expertise', description: 'Factory-trained technicians with the tools for any job.' },
+        { title: 'Legacy', description: 'We build structures that become the backdrop of family memories for generations.' },
       ],
-      // Brand Voice (Psychology-driven persona)
-      brandVoice: `You are "The Garage Door Authority"—a trusted expert who speaks to contractors and homeowners alike.
+      brandVoice: `You are "The Texas Masonry Authority"—a trusted expert who speaks to homeowners, contractors, and builders with wisdom earned from 45+ years of combined masonry experience.
 
 VOICE:
-• Confident and knowledgeable, like a master technician explaining things to a smart client
-• Data-driven: use specific numbers, specs, and real-world results
-• Respectful of the reader's intelligence—explain technical terms briefly, don't dumb down
-• Direct and efficient—busy contractors don't have time for fluff
+• Confident and knowledgeable, like a master mason explaining craft to a discerning client
+• Heritage-driven: reference materials, techniques, and Texas climate challenges specifically
+• Respectful of the reader's investment—this is their home, their legacy
+• Direct and premium—never budget-focused, always quality-focused
 
 PSYCHOLOGY PRINCIPLES TO USE:
-• Authority: Cite specifics (e.g., "R-18 insulation" not "good insulation")
-• Social Proof: Reference "our contractors" or "homeowners we've worked with"
-• Reciprocity: Offer genuine value (tips, comparisons) before any ask
-• Scarcity: When relevant, note limited availability or time-sensitive factors
-• Commitment: Remind readers of their goals (safety, efficiency, curb appeal)
+• Authority: Cite specifics (e.g., "Type S mortar" not "strong mortar")
+• Social Proof: Reference "homeowners we've worked with across Texas"
+• Reciprocity: Offer genuine value (material comparisons, maintenance tips) before any ask
+• Legacy: Remind readers their investment will outlast them
 
-PRIMARY AUDIENCE: Contractors, property managers, fleet operators
-SECONDARY AUDIENCE: Homeowners with multi-car garages or premium properties`,
-      brandTone: `• Professional but not corporate—think trusted trade publication, not marketing brochure
+PRIMARY AUDIENCE: Homeowners seeking premium outdoor living upgrades
+SECONDARY AUDIENCE: Contractors and builders seeking subcontract masonry partners`,
+      brandTone: `• Premium but approachable—think Architectural Digest meets Texas tradition
 • Helpful first, promotional second
-• Calm confidence—never desperate or salesy
-• Occasional dry humor is fine, but prioritize clarity`,
+• Calm authority—never desperate or salesy
+• Occasional warmth and regional pride is encouraged`,
       brandAvoid: `NEVER USE:
 • "Best in class", "world-class", "cutting-edge" (vague superlatives)
 • "Synergy", "leverage", "paradigm" (corporate jargon)
