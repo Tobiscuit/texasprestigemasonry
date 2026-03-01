@@ -26,7 +26,7 @@ export function PwaRegistry() {
             if (installingWorker) {
               installingWorker.onstatechange = () => {
                 if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                    installingWorker.postMessage({ type: 'SKIP_WAITING' });
+                  installingWorker.postMessage({ type: 'SKIP_WAITING' });
                 }
               };
             }
@@ -45,12 +45,12 @@ export function PwaRegistry() {
     const checkAndShowModal = () => {
       const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
       // We check localStorage right at evaluation time to avoid stale React closures
-      const hasPrompted = localStorage.getItem('pwa-prompt-shown') === 'true';
-      
+      const hasPrompted = localStorage.getItem('tpm-pwa-prompt-shown') === 'true';
+
       if (!isStandalone && !hasPrompted) {
         timeoutId = setTimeout(() => {
           // Double check right before showing in case they dismissed it on another tab
-          if (localStorage.getItem('pwa-prompt-shown') !== 'true') {
+          if (localStorage.getItem('tpm-pwa-prompt-shown') !== 'true') {
             setShowModal(true);
           }
         }, 3000);
@@ -66,10 +66,10 @@ export function PwaRegistry() {
 
     // 5. Trigger
     if (isIOS) {
-        // iOS doesn't fire beforeinstallprompt, so we trigger manually
-        checkAndShowModal();
+      // iOS doesn't fire beforeinstallprompt, so we trigger manually
+      checkAndShowModal();
     } else {
-        window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+      window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
     }
 
     return () => {
@@ -80,30 +80,30 @@ export function PwaRegistry() {
 
   const handleInstall = async () => {
     if (!installPrompt) return;
-    
+
     installPrompt.prompt();
     const { outcome } = await installPrompt.userChoice;
-    
+
     if (outcome === 'accepted') {
       console.log('User accepted the PWA install');
     }
-    
+
     setInstallPrompt(null);
     setShowModal(false);
-    localStorage.setItem('pwa-prompt-shown', 'true');
+    localStorage.setItem('tpm-pwa-prompt-shown', 'true');
   };
 
   const handleClose = () => {
     setShowModal(false);
-    localStorage.setItem('pwa-prompt-shown', 'true');
+    localStorage.setItem('tpm-pwa-prompt-shown', 'true');
   };
 
   return (
-    <PwaInstallModal 
-        show={showModal} 
-        onClose={handleClose} 
-        onInstall={handleInstall} 
-        platform={platform} 
+    <PwaInstallModal
+      show={showModal}
+      onClose={handleClose}
+      onInstall={handleInstall}
+      platform={platform}
     />
   );
 }

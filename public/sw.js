@@ -1,4 +1,4 @@
-const CACHE_NAME = 'mobile-garage-door-pwa-v1';
+const CACHE_NAME = 'texas-prestige-masonry-pwa-v1';
 
 // Assets to cache for basic offline shell functionality
 const OFFLINE_URLS = [
