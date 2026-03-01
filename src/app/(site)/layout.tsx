@@ -13,6 +13,10 @@ export const metadata: Metadata = {
   authors: [{ name: 'Texas Prestige Masonry' }],
   creator: 'Texas Prestige Masonry',
   publisher: 'Texas Prestige Masonry',
+  icons: {
+    icon: '/favicon.ico',
+    apple: '/images/pwa/apple-touch-icon.png',
+  },
   robots: {
     index: true,
     follow: true,
