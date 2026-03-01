@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { getActiveJobsList, getTechnicianStatusList } from '@/app/(site)/dashboard/actions';
+import { getActiveJobsList, getTechnicianStatusList } from '@/app/(site)/(public)/[locale]/dashboard/actions';
 
 export function ActiveJobsList() {
   const [jobs, setJobs] = useState<any[]>([]);
@@ -14,7 +14,7 @@ export function ActiveJobsList() {
     });
   }, []);
 
-  if (loading) return <div className="animate-pulse space-y-4">{[1,2,3].map(i => <div key={i} className="h-16 rounded-xl" style={{ backgroundColor: 'var(--staff-surface-alt)' }} />)}</div>;
+  if (loading) return <div className="animate-pulse space-y-4">{[1, 2, 3].map(i => <div key={i} className="h-16 rounded-xl" style={{ backgroundColor: 'var(--staff-surface-alt)' }} />)}</div>;
 
   if (jobs.length === 0) return <div className="text-center py-8" style={{ color: 'var(--staff-muted)' }}>No active jobs found</div>;
 
@@ -52,7 +52,7 @@ export function TechnicianList() {
     });
   }, []);
 
-  if (loading) return <div className="animate-pulse space-y-4">{[1,2].map(i => <div key={i} className="h-12 rounded-xl" style={{ backgroundColor: 'var(--staff-surface-alt)' }} />)}</div>;
+  if (loading) return <div className="animate-pulse space-y-4">{[1, 2].map(i => <div key={i} className="h-12 rounded-xl" style={{ backgroundColor: 'var(--staff-surface-alt)' }} />)}</div>;
 
   if (techs.length === 0) return <div className="text-center py-8" style={{ color: 'var(--staff-muted)' }}>No technicians found</div>;
 
@@ -62,7 +62,7 @@ export function TechnicianList() {
         <div key={tech.id} className="p-3 rounded-xl flex items-center justify-between" style={{ backgroundColor: 'var(--staff-surface)', border: '1px solid var(--staff-border)' }}>
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 rounded-full bg-[#3498db]/20 flex items-center justify-center text-[#3498db] font-bold text-xs">
-              {tech.name?.substring(0,2).toUpperCase()}
+              {tech.name?.substring(0, 2).toUpperCase()}
             </div>
             <div>
               <div className="text-sm font-bold" style={{ color: 'var(--staff-text)' }}>{tech.name}</div>
@@ -70,8 +70,8 @@ export function TechnicianList() {
             </div>
           </div>
           <div className="flex items-center gap-1.5">
-             <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-             <span className="text-xs text-green-400">Online</span>
+            <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+            <span className="text-xs text-green-400">Online</span>
           </div>
         </div>
       ))}
