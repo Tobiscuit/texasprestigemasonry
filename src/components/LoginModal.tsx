@@ -48,6 +48,35 @@ export function LoginModal({ isOpen, onClose }: { isOpen: boolean; onClose: () =
         }
     };
 
+    const handleDemoAdminLogin = async () => {
+        setLoading(true);
+        setError('');
+        try {
+            // Create the admin user (fails silently if already exists)
+            await authClient.signUp.email({
+                email: 'admin@texasprestigemasonry.com',
+                password: 'admin-password',
+                name: 'Demo Admin',
+            });
+            // Sign in
+            const { error: signInError } = await authClient.signIn.email({
+                email: 'admin@texasprestigemasonry.com',
+                password: 'admin-password',
+            });
+
+            if (signInError) {
+                setError(signInError.message || 'Failed test admin login');
+            } else {
+                router.push('/dashboard');
+                onClose();
+            }
+        } catch (err: any) {
+            setError('Demo login failed: ' + err.message);
+        } finally {
+            setLoading(false);
+        }
+    };
+
     // Prevent clicks inside the modal from closing it
     const handleModalClick = (e: React.MouseEvent) => e.stopPropagation();
 
@@ -81,7 +110,7 @@ export function LoginModal({ isOpen, onClose }: { isOpen: boolean; onClose: () =
                         </button>
 
                         <div className="bg-midnight-slate p-8 pb-6 text-center border-b border-gray-100 relative overflow-hidden">
-                            <div className="absolute inset-0 bg-gradient-to-br from-midnight-slate to-[#1a2b3c] opacity-50"></div>
+                            <div className="absolute inset-0 bg-gradient-to-br from-midnight-slate to-midnight-slate/70 opacity-50"></div>
                             <h2 className="text-2xl font-black text-white relative z-10 font-playfair tracking-tight">
                                 Client Portal
                             </h2>
@@ -151,7 +180,7 @@ export function LoginModal({ isOpen, onClose }: { isOpen: boolean; onClose: () =
                                 <button
                                     type="submit"
                                     disabled={loading}
-                                    className="w-full mt-2 bg-midnight-slate hover:bg-[#1a2b3c] text-white font-bold py-4 rounded-xl transition-all shadow-md hover:shadow-lg disabled:opacity-50 flex justify-center items-center group"
+                                    className="w-full mt-2 bg-midnight-slate hover:bg-midnight-slate/90 text-white font-bold py-4 rounded-xl transition-all shadow-md hover:shadow-lg disabled:opacity-50 flex justify-center items-center group"
                                 >
                                     {loading ? (
                                         <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -168,6 +197,18 @@ export function LoginModal({ isOpen, onClose }: { isOpen: boolean; onClose: () =
                                     )}
                                 </button>
                             </form>
+
+                            {process.env.NODE_ENV === 'development' && (
+                                <div className="mt-6 pt-4 border-t border-gray-100">
+                                    <button
+                                        onClick={handleDemoAdminLogin}
+                                        disabled={loading}
+                                        className="w-full bg-red-50 hover:bg-red-100 text-red-600 font-bold py-3 rounded-xl transition-all border border-red-200 text-sm flex justify-center items-center"
+                                    >
+                                        🛠️ DEV: 1-Click Admin Login
+                                    </button>
+                                </div>
+                            )}
                         </div>
                     </motion.div>
                 </motion.div>

@@ -41,6 +41,23 @@ export const auth = betterAuth({
       clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
     },
   },
+  databaseHooks: {
+    user: {
+      create: {
+        before: async (user) => {
+          if (user.email === 'admin@texasprestigemasonry.com') {
+            return {
+              data: {
+                ...user,
+                role: 'admin',
+              },
+            };
+          }
+          return { data: user };
+        },
+      },
+    },
+  },
   session: {
     expiresIn: 60 * 60 * 24 * 30, // 30 days
     updateAge: 60 * 60 * 24, // 1 day
@@ -55,10 +72,10 @@ export const auth = betterAuth({
         console.log(`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`);
         try {
           await sendEmail({
-             to: email,
-             subject: 'Sign in to Texas Prestige Masonry',
-             html: `<p>Click the link below to sign in:</p><a href="${url}">${url}</a><p>If you didn't request this, you can ignore this email.</p>`,
-             text: `Click the link below to sign in:\n\n${url}\n\nIf you didn't request this, you can ignore this email.`
+            to: email,
+            subject: 'Sign in to Texas Prestige Masonry',
+            html: `<p>Click the link below to sign in:</p><a href="${url}">${url}</a><p>If you didn't request this, you can ignore this email.</p>`,
+            text: `Click the link below to sign in:\n\n${url}\n\nIf you didn't request this, you can ignore this email.`
           });
         } catch (error) {
           console.error('Failed to send magic link email:', error);

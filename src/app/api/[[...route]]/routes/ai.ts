@@ -4,7 +4,7 @@ import { PROJECT_WRITEUP_PROMPT, SERVICE_DESCRIPTION_PROMPT, BLOG_POST_PROMPT, P
 export const aiApp = new Hono();
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-const GEMINI_MODEL = 'gemini-2.0-flash';
+const GEMINI_MODEL = 'gemini-3.0-flash';
 const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`;
 
 async function callGemini(prompt: string): Promise<any> {
