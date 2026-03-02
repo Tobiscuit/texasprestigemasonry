@@ -63,10 +63,10 @@ export default async function DashboardLayout({
       <Sidebar />
 
       {/* MAIN CONTENT AREA */}
-      <main className="md:ml-[280px] min-h-screen relative z-0 pb-20 md:pb-0">
+      <main className="lg:ml-[280px] min-h-screen relative z-0 pt-20 lg:pt-0 pb-20 lg:pb-0">
         <div className="fixed inset-0 pointer-events-none z-[-1] bg-[radial-gradient(circle_at_top_right,rgba(241,196,15,0.08),transparent_40%)]" />
 
-        <div className="p-4 md:p-8 max-w-7xl mx-auto">
+        <div className="p-4 lg:p-8 max-w-7xl mx-auto">
           {children}
         </div>
       </main>

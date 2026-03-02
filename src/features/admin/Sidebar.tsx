@@ -127,8 +127,8 @@ export default function Sidebar() {
               key={item.href}
               href={item.href}
               className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 group relative ${active
-                  ? 'bg-[#f1c40f]/10 text-[#f1c40f] font-bold'
-                  : 'text-[var(--staff-muted)] hover:text-[var(--staff-text)] hover:bg-[var(--staff-surface-alt)]'
+                ? 'bg-[#f1c40f]/10 text-[#f1c40f] font-bold'
+                : 'text-[var(--staff-muted)] hover:text-[var(--staff-text)] hover:bg-[var(--staff-surface-alt)]'
                 }`}
             >
               {/* Active indicator */}
@@ -170,27 +170,35 @@ export default function Sidebar() {
 
   return (
     <>
-      {/* ─── MOBILE HAMBURGER BUTTON ─── */}
-      <button
-        onClick={() => setMobileOpen(true)}
-        className="md:hidden fixed top-4 left-4 z-50 w-11 h-11 rounded-xl bg-[var(--staff-surface)] border border-[var(--staff-border)] flex items-center justify-center shadow-lg hover:border-[#f1c40f]/50 transition-colors"
-        aria-label="Open navigation"
-      >
-        <svg className="w-5 h-5 text-[var(--staff-text)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-        </svg>
-      </button>
+      {/* ─── MOBILE/TABLET TOP BAR ─── */}
+      <div className="lg:hidden fixed top-0 left-0 right-0 h-16 bg-[var(--staff-surface)]/80 backdrop-blur-md border-b border-[var(--staff-border)] z-40 flex items-center px-4 justify-between">
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => setMobileOpen(true)}
+            className="w-10 h-10 rounded-lg bg-[var(--staff-surface-alt)] border border-[var(--staff-border)] flex items-center justify-center hover:border-[#f1c40f]/50 transition-colors"
+            aria-label="Open navigation"
+          >
+            <svg className="w-5 h-5 text-[var(--staff-text)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
+          <div className="flex items-center gap-2">
+            <span className="text-[#f1c40f] text-sm font-black uppercase tracking-widest">TPM</span>
+            <span className="text-[var(--staff-muted)] text-sm font-bold uppercase tracking-widest">Admin</span>
+          </div>
+        </div>
+      </div>
 
       {/* ─── MOBILE DRAWER ─── */}
       {mobileOpen && (
-        <div className="md:hidden fixed inset-0 z-50">
+        <div className="lg:hidden fixed inset-0 z-50">
           {/* Backdrop */}
           <div
             className="absolute inset-0 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200"
             onClick={() => setMobileOpen(false)}
           />
           {/* Drawer */}
-          <aside className="absolute inset-y-0 left-0 w-[280px] bg-[var(--staff-surface)] border-r border-[var(--staff-border)] p-6 flex flex-col overflow-y-auto animate-in slide-in-from-left duration-300">
+          <aside className="absolute inset-y-0 left-0 w-[280px] bg-[var(--staff-surface)] border-r border-[var(--staff-border)] p-6 flex flex-col overflow-y-auto animate-in slide-in-from-left duration-300 shadow-2xl">
             <button
               onClick={() => setMobileOpen(false)}
               className="absolute top-4 right-4 w-8 h-8 rounded-lg hover:bg-[var(--staff-surface-alt)] flex items-center justify-center transition-colors"
@@ -206,7 +214,7 @@ export default function Sidebar() {
       )}
 
       {/* ─── DESKTOP SIDEBAR ─── */}
-      <aside className="hidden md:flex flex-col w-[280px] fixed inset-y-0 left-0 z-30 bg-[var(--staff-surface)] border-r border-[var(--staff-border)] p-6 overflow-y-auto">
+      <aside className="hidden lg:flex flex-col w-[280px] fixed inset-y-0 left-0 z-30 bg-[var(--staff-surface)] border-r border-[var(--staff-border)] p-6 overflow-y-auto">
         {navContent}
       </aside>
     </>
