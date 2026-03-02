@@ -1,5 +1,5 @@
 import { Hono } from 'hono';
-import { PROJECT_WRITEUP_PROMPT, SERVICE_DESCRIPTION_PROMPT, BLOG_POST_PROMPT } from '@/lib/ai-prompts';
+import { PROJECT_WRITEUP_PROMPT, SERVICE_DESCRIPTION_PROMPT, BLOG_POST_PROMPT, PROJECT_ESTIMATE_PROMPT } from '@/lib/ai-prompts';
 
 export const aiApp = new Hono();
 
@@ -101,5 +101,25 @@ aiApp.post('/generate-post', async (c) => {
     } catch (err: any) {
         console.error('AI post generation error:', err);
         return c.json({ error: err.message || 'AI generation failed' }, 500);
+    }
+});
+
+// ─── Generate Project Estimate (Customer-Facing) ─────────────────────────
+aiApp.post('/generate-estimate', async (c) => {
+    try {
+        const body = await c.req.json();
+        const { projectType, description, timeline, budget } = body;
+
+        if (!projectType || !description) {
+            return c.json({ error: 'Project type and description are required' }, 400);
+        }
+
+        const prompt = PROJECT_ESTIMATE_PROMPT({ projectType, description, timeline, budget });
+        const result = await callGemini(prompt);
+
+        return c.json(result);
+    } catch (err: any) {
+        console.error('AI estimate generation error:', err);
+        return c.json({ error: err.message || 'Estimation failed' }, 500);
     }
 });

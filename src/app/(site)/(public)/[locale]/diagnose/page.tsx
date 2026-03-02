@@ -1,460 +1,361 @@
 'use client';
 
-import React, { useState, useRef, useEffect, useCallback } from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 
-const UI_STRINGS: Record<string, { initialMessage: string; startButton: string; permissionPrompt: string; heading: string; exitLabel: string }> = {
-  en: { initialMessage: "I'm listening. Point your camera at the masonry issue.", startButton: 'Start Diagnostic', permissionPrompt: 'I need to <strong>see</strong> and <strong>hear</strong> your issue.', heading: "Let's see what's wrong.", exitLabel: 'Exit' },
-  es: { initialMessage: 'Estoy escuchando. Apunte la cámara al problema.', startButton: 'Iniciar Diagnóstico', permissionPrompt: 'Necesito <strong>ver</strong> y <strong>escuchar</strong> el problema.', heading: 'Veamos qué pasa.', exitLabel: 'Salir' },
-  vi: { initialMessage: 'Tôi đang lắng nghe. Hãy hướng camera vào khu vực gặp vấn đề.', startButton: 'Bắt đầu Chẩn đoán', permissionPrompt: 'Tôi cần <strong>nhìn</strong> và <strong>nghe</strong> vấn đề của bạn.', heading: 'Hãy xem có vấn đề gì.', exitLabel: 'Thoát' },
+const UI_STRINGS: Record<string, {
+  heading: string; subheading: string; submitButton: string; exitLabel: string;
+  nameLabel: string; namePlaceholder: string; emailLabel: string; emailPlaceholder: string;
+  projectTypeLabel: string; descriptionLabel: string; descriptionPlaceholder: string;
+  timelineLabel: string; budgetLabel: string;
+  resultTitle: string; resultDisclaimer: string; ctaButton: string;
+}> = {
+  en: {
+    heading: 'AI Project Estimator', subheading: 'Describe your masonry project and our AI will generate a preliminary scope and estimate range.',
+    submitButton: 'Generate Estimate', exitLabel: 'Back',
+    nameLabel: 'Your Name', namePlaceholder: 'John Smith',
+    emailLabel: 'Email', emailPlaceholder: 'john@example.com',
+    projectTypeLabel: 'Project Type', descriptionLabel: 'Describe Your Vision',
+    descriptionPlaceholder: 'Tell us what you\'re looking for — materials, size, any inspiration or reference photos you\'ve seen...',
+    timelineLabel: 'Ideal Timeline', budgetLabel: 'Budget Range',
+    resultTitle: 'Your Estimate', resultDisclaimer: 'This is an AI-generated preliminary estimate. Final pricing depends on site conditions, materials selected, and design complexity. A Texas Prestige Masonry specialist will follow up within 24 hours.',
+    ctaButton: 'Request Full Consultation',
+  },
+  es: {
+    heading: 'Estimador de Proyectos IA', subheading: 'Describa su proyecto de albañilería y nuestra IA generará un alcance preliminar y un rango de estimación.',
+    submitButton: 'Generar Estimación', exitLabel: 'Atrás',
+    nameLabel: 'Su Nombre', namePlaceholder: 'Juan Pérez',
+    emailLabel: 'Correo', emailPlaceholder: 'juan@ejemplo.com',
+    projectTypeLabel: 'Tipo de Proyecto', descriptionLabel: 'Describa Su Visión',
+    descriptionPlaceholder: 'Díganos qué busca — materiales, tamaño, inspiración...',
+    timelineLabel: 'Cronograma Ideal', budgetLabel: 'Rango de Presupuesto',
+    resultTitle: 'Su Estimación', resultDisclaimer: 'Esta es una estimación preliminar generada por IA. El precio final depende de las condiciones del sitio, los materiales seleccionados y la complejidad del diseño.',
+    ctaButton: 'Solicitar Consulta Completa',
+  },
 };
 
-export default function DiagnosePage() {
-  const router = useRouter();
+const PROJECT_TYPES = [
+  { value: 'outdoor-kitchen', label: '🍳 Outdoor Kitchen' },
+  { value: 'pavers-patio', label: '🧱 Pavers & Patio' },
+  { value: 'fire-pit', label: '🔥 Fire Pit / Fireplace' },
+  { value: 'retaining-wall', label: '🏗️ Retaining Wall' },
+  { value: 'stone-veneer', label: '🏠 Stone Veneer' },
+  { value: 'commercial', label: '🏢 Commercial Masonry' },
+  { value: 'pool-deck', label: '🏊 Pool Deck' },
+  { value: 'driveway', label: '🚗 Driveway' },
+  { value: 'other', label: '✨ Other / Custom' },
+];
+
+const TIMELINES = [
+  { value: 'asap', label: 'ASAP' },
+  { value: '1-3-months', label: '1-3 Months' },
+  { value: '3-6-months', label: '3-6 Months' },
+  { value: 'flexible', label: 'Flexible' },
+];
+
+const BUDGETS = [
+  { value: 'under-5k', label: 'Under $5,000' },
+  { value: '5k-15k', label: '$5,000 - $15,000' },
+  { value: '15k-35k', label: '$15,000 - $35,000' },
+  { value: '35k-75k', label: '$35,000 - $75,000' },
+  { value: '75k-plus', label: '$75,000+' },
+  { value: 'unsure', label: 'Not Sure Yet' },
+];
+
+interface EstimateResult {
+  estimatedRange: string;
+  scope: string;
+  materials: string[];
+  timelineEstimate: string;
+  considerations: string[];
+  nextSteps: string;
+}
+
+export default function EstimatePage() {
   const searchParams = useSearchParams();
   const lang = searchParams.get('lang') || 'en';
   const ui = UI_STRINGS[lang] || UI_STRINGS.en;
 
-  const [hasPermission, setHasPermission] = useState<boolean | null>(null);
-  const [status, setStatus] = useState<'idle' | 'connecting' | 'connected' | 'error'>('idle');
-  const [aiState, setAiState] = useState<'listening' | 'thinking' | 'speaking'>('listening');
-  const [aiMessage, setAiMessage] = useState(ui.initialMessage);
-  const [waveformData, setWaveformData] = useState<number[]>(new Array(20).fill(0));
+  const [step, setStep] = useState<'form' | 'loading' | 'result'>('form');
+  const [error, setError] = useState<string | null>(null);
+  const [result, setResult] = useState<EstimateResult | null>(null);
 
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const wsRef = useRef<WebSocket | null>(null);
-  const audioContextRef = useRef<AudioContext | null>(null);
-  const playbackContextRef = useRef<AudioContext | null>(null);
-  const nextStartTimeRef = useRef(0);
-  const videoIntervalRef = useRef<number | null>(null);
-  const streamsStartedRef = useRef(false);
-  const analyserRef = useRef<AnalyserNode | null>(null);
-  const animFrameRef = useRef<number | null>(null);
-  const fullTranscriptRef = useRef('');
-  const typewriterTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const displayedLenRef = useRef(0);
+  // Form state
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [projectType, setProjectType] = useState('');
+  const [description, setDescription] = useState('');
+  const [timeline, setTimeline] = useState('');
+  const [budget, setBudget] = useState('');
 
-  useEffect(() => {
-    return () => {
-      stopMedia();
-      wsRef.current?.close();
-      if (typewriterTimerRef.current) clearInterval(typewriterTimerRef.current);
-    };
-  }, []);
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setStep('loading');
+    setError(null);
 
-  // Visibility API: kill audio/WS on Android swipe-away or tab switch
-  useEffect(() => {
-    const handler = () => {
-      if (document.hidden) {
-        audioContextRef.current?.suspend();
-        playbackContextRef.current?.suspend();
-        wsRef.current?.close();
-        setStatus('idle');
-      }
-    };
-    document.addEventListener('visibilitychange', handler);
-    return () => document.removeEventListener('visibilitychange', handler);
-  }, []);
-
-  const stopMedia = () => {
-    if (videoRef.current && videoRef.current.srcObject) {
-      const stream = videoRef.current.srcObject as MediaStream;
-      stream.getTracks().forEach(track => {
-        track.stop();
-        track.enabled = false;
+    try {
+      const res = await fetch('/api/ai/generate-estimate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, projectType, description, timeline, budget }),
       });
-      videoRef.current.srcObject = null;
-    }
-    audioContextRef.current?.close();
-    playbackContextRef.current?.close();
-    if (videoIntervalRef.current !== null) {
-      window.clearInterval(videoIntervalRef.current);
-      videoIntervalRef.current = null;
-    }
-    if (animFrameRef.current !== null) {
-      cancelAnimationFrame(animFrameRef.current);
-      animFrameRef.current = null;
-    }
-    streamsStartedRef.current = false;
-  };
 
-
-
-  const startCamera = async () => {
-    try {
-      const audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)({ sampleRate: 16000 });
-      audioContextRef.current = audioCtx;
-
-      if (audioCtx.state === 'suspended') {
-        await audioCtx.resume();
-      }
-
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: 'environment' },
-        audio: {
-          sampleRate: 16000,
-          channelCount: 1,
-          echoCancellation: true
-        }
-      });
-      setHasPermission(true);
-
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream;
-        videoRef.current.play().catch(e => console.error('Play Error:', e));
-      }
-
-      connectWebSocket(stream);
-
-    } catch (err: any) {
-      console.error('Camera Error:', err);
-      setHasPermission(false);
-      alert("We need camera access. Please check permissions.");
-    }
-  };
-
-  const connectWebSocket = (stream: MediaStream) => {
-    setStatus('connecting');
-
-    const baseUrl = window.location.hostname === 'localhost'
-      ? 'ws://localhost:3001'
-      : 'wss://texas-prestige-masonry-realtime-proxy.tobiasramzy.workers.dev';
-    const wsUrl = `${baseUrl}?lang=${lang}`;
-
-    const ws = new WebSocket(wsUrl);
-    wsRef.current = ws;
-
-    ws.onopen = () => {
-      setStatus('connected');
-    };
-
-    ws.onmessage = async (event) => {
-      try {
-        const data = JSON.parse(event.data);
-
-        // DEBUG: Log every non-audio message's top-level keys
-        const keys = Object.keys(data);
-        if (!keys.includes('serverContent') || !data.serverContent?.modelTurn?.parts?.some((p: any) => p.inlineData)) {
-          console.log('[WS] Message keys:', keys, JSON.stringify(data).substring(0, 500));
-        }
-
-        if (data.setupComplete) {
-          if (!streamsStartedRef.current) {
-            streamsStartedRef.current = true;
-            startAudioStreaming(stream);
-            startVideoStreaming();
-            ws.send(JSON.stringify({
-              clientContent: {
-                turns: [{
-                  role: "user",
-                  parts: [{ text: "[The customer has connected and pointed their camera at the masonry issue. Greet them warmly and begin your visual inspection.]" }]
-                }],
-                turnComplete: true
-              }
-            }));
-          }
-        }
-
-        // 1. Handle Audio Output (Skip text from modelTurn — it's thinking, not speech)
-        if (data.serverContent?.modelTurn?.parts) {
-          setAiState('speaking');
-          for (const part of data.serverContent.modelTurn.parts) {
-            if (part.inlineData && part.inlineData.mimeType.startsWith('audio/pcm')) {
-              playPcmAudio(part.inlineData.data);
-            }
-          }
-        }
-
-        // 2. Handle Tool Calls — Gemini Live API sends toolCall at TOP LEVEL of message, not inside serverContent
-        const toolCall = data.toolCall || data.serverContent?.toolCall;
-        if (toolCall?.functionCalls) {
-          console.log('[WS] 🔧 TOOL CALL DETECTED:', JSON.stringify(toolCall));
-          for (const call of toolCall.functionCalls) {
-            if (call.name === 'report_diagnosis') {
-              const args = call.args || {};
-              const hour = new Date().getHours();
-              const isAfterHours = hour < 7 || hour >= 19;
-              const finalUrgency = args.urgency === 'emergency' || isAfterHours
-                ? 'emergency' : 'standard';
-
-              // Store diagnosis in sessionStorage for the booking form
-              sessionStorage.setItem('aiDiagnosis', JSON.stringify({
-                issueDescription: args.issue_summary || "Automated diagnostic completed.",
-                urgency: finalUrgency,
-                fromDiagnosis: true
-              }));
-
-              console.log('[WS] ✅ DIAGNOSIS STORED, REDIRECTING in 1.5s:', args);
-              setAiMessage("Filing your service report... Redirecting you now.");
-
-              setTimeout(() => {
-                wsRef.current?.close();
-                stopMedia();
-                window.location.href = '/book-service';
-              }, 1500);
-            }
-          }
-        }
-
-        // Handle Transcript (Typewriter Effect)
-        if (data.serverContent?.outputTranscription?.text) {
-          const newChunk = data.serverContent.outputTranscription.text;
-          fullTranscriptRef.current += newChunk;
-
-          if (!typewriterTimerRef.current) {
-            typewriterTimerRef.current = setInterval(() => {
-              if (displayedLenRef.current < fullTranscriptRef.current.length) {
-                displayedLenRef.current += 1;
-                setAiMessage(fullTranscriptRef.current.slice(0, displayedLenRef.current));
-              }
-            }, 30);
-          }
-        }
-
-        if (data.serverContent?.turnComplete) {
-          setAiState('listening');
-          // Reset transcript for next turn
-          fullTranscriptRef.current = '';
-          displayedLenRef.current = 0;
-          if (typewriterTimerRef.current) {
-            clearInterval(typewriterTimerRef.current);
-            typewriterTimerRef.current = null;
-          }
-        }
-      } catch (e) {
-        console.error('Parse error', e);
-      }
-    };
-
-    ws.onerror = (err) => {
-      console.error('WS Error:', err);
-      setStatus('error');
-    };
-
-    ws.onclose = () => {
-      setStatus('idle');
-    };
-  };
-
-  const startAudioStreaming = async (stream: MediaStream) => {
-    const audioCtx = audioContextRef.current;
-    if (!audioCtx) return;
-
-    try {
-      await audioCtx.audioWorklet.addModule('/worklets/pcm-processor.js');
-
-      const source = audioCtx.createMediaStreamSource(stream);
-      const workletNode = new AudioWorkletNode(audioCtx, 'pcm-processor');
-
-      // AnalyserNode for live waveform visualization
-      const analyser = audioCtx.createAnalyser();
-      analyser.fftSize = 64;
-      source.connect(analyser);
-      analyserRef.current = analyser;
-
-      // Start waveform animation loop
-      const updateWaveform = () => {
-        if (!analyserRef.current) return;
-        const dataArray = new Uint8Array(analyserRef.current.frequencyBinCount);
-        analyserRef.current.getByteFrequencyData(dataArray);
-        // Sample 20 bars from the frequency data
-        const bars = Array.from({ length: 20 }, (_, i) => {
-          const idx = Math.floor((i / 20) * dataArray.length);
-          return dataArray[idx] / 255;
-        });
-        setWaveformData(bars);
-        animFrameRef.current = requestAnimationFrame(updateWaveform);
-      };
-      updateWaveform();
-
-      workletNode.port.onmessage = (event) => {
-        if (wsRef.current?.readyState !== WebSocket.OPEN) return;
-
-        const pcmBuffer = event.data;
-        const base64Audio = btoa(String.fromCharCode(...new Uint8Array(pcmBuffer)));
-
-        wsRef.current.send(JSON.stringify({
-          realtimeInput: {
-            audio: {
-              mimeType: "audio/pcm;rate=16000",
-              data: base64Audio
-            }
-          }
-        }));
-      };
-
-      source.connect(workletNode);
-      workletNode.connect(audioCtx.destination);
-
-    } catch (e: any) {
-      console.error('AudioWorklet Error:', e);
-    }
-  };
-
-  const startVideoStreaming = () => {
-    const interval = window.setInterval(() => {
-      if (wsRef.current?.readyState !== WebSocket.OPEN || !videoRef.current) return;
-
-      // Debug: Check if video is actually ready
-      if (videoRef.current.readyState < 2) {
-        // 0=HAVE_NOTHING, 1=HAVE_METADATA, 2=HAVE_CURRENT_DATA
-        return;
-      }
-
-      if (videoRef.current.videoWidth === 0) {
-        // Log only once per second to avoid spam (simple throttle check could be added here but keeping it simple)
-
-        return;
-      }
-
-      const canvas = document.createElement('canvas');
-      canvas.width = videoRef.current.videoWidth || 640;
-      canvas.height = videoRef.current.videoHeight || 480;
-
-      const ctx = canvas.getContext('2d');
-      if (!ctx) return;
-
-      ctx.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
-      const base64Image = canvas.toDataURL('image/jpeg', 0.6).split(',')[1];
-
-      wsRef.current.send(JSON.stringify({
-        realtimeInput: {
-          video: {
-            mimeType: "image/jpeg",
-            data: base64Image
-          }
-        }
-      }));
-
-    }, 500);
-    videoIntervalRef.current = interval;
-  };
-
-  const playPcmAudio = (base64String: string) => {
-    try {
-      // Initialize playback context once at 24kHz (Gemini's output rate)
-      if (!playbackContextRef.current || playbackContextRef.current.state === 'closed') {
-        playbackContextRef.current = new AudioContext({ sampleRate: 24000 });
-        nextStartTimeRef.current = playbackContextRef.current.currentTime;
-      }
-      const audioCtx = playbackContextRef.current;
-      if (!audioCtx) return;
-
-      // Decode base64 → raw bytes
-      const binaryString = atob(base64String);
-      const len = binaryString.length;
-      const bytes = new Uint8Array(len);
-      for (let i = 0; i < len; i++) {
-        bytes[i] = binaryString.charCodeAt(i);
-      }
-
-      // Int16 PCM → Float32 for Web Audio
-      const samples = new Float32Array(bytes.length / 2);
-      const dataView = new DataView(bytes.buffer);
-      for (let i = 0; i < samples.length; i++) {
-        const int16 = dataView.getInt16(i * 2, true);
-        samples[i] = int16 / 32768;
-      }
-
-      const buffer = audioCtx.createBuffer(1, samples.length, 24000);
-      buffer.getChannelData(0).set(samples);
-
-      const source = audioCtx.createBufferSource();
-      source.buffer = buffer;
-      source.connect(audioCtx.destination);
-
-      // Schedule sequentially — don't overlap chunks
-      if (nextStartTimeRef.current < audioCtx.currentTime) {
-        nextStartTimeRef.current = audioCtx.currentTime;
-      }
-      source.start(nextStartTimeRef.current);
-      nextStartTimeRef.current += buffer.duration;
-
-    } catch (e: any) {
-      console.error('Audio Out Error:', e);
+      if (!res.ok) throw new Error('Estimation failed');
+      const data = await res.json();
+      setResult(data);
+      setStep('result');
+    } catch {
+      setError('Something went wrong. Please try again or contact us directly.');
+      setStep('form');
     }
   };
 
   return (
-    <div className="fixed inset-0 bg-black text-white flex flex-col z-50">
+    <div className="min-h-screen bg-midnight-slate text-white">
+      {/* HERO HEADER */}
+      <div className="relative overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(197,160,89,0.15),transparent_60%)]" />
+        <div className="absolute inset-0 opacity-5" style={{ backgroundImage: 'repeating-linear-gradient(45deg, #000 0, #000 1px, transparent 0, transparent 50%)', backgroundSize: '20px 20px' }} />
 
+        <div className="container mx-auto px-6 pt-8 pb-16 relative z-10">
+          <Link href="/" className="inline-flex items-center gap-2 text-mortar-gray hover:text-burnished-gold transition-colors mb-8 group">
+            <svg className="w-5 h-5 group-hover:-translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
+            <span className="text-sm font-bold uppercase tracking-widest">{ui.exitLabel}</span>
+          </Link>
 
-      {/* HEADER */}
-      <div className="absolute top-0 left-0 right-0 p-4 flex justify-between items-center z-20 bg-gradient-to-b from-black/80 to-transparent">
-        <Link href="/" className="text-white/80 hover:text-white flex items-center gap-2">
-          <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
-          <span className="text-sm font-bold uppercase tracking-widest">{ui.exitLabel}</span>
-        </Link>
-        <div className={`px-3 py-1 border rounded-full flex items-center gap-2 backdrop-blur-md transition-colors ${status === 'connected' ? 'bg-green-600/30 border-green-500/50' :
-            status === 'error' ? 'bg-red-600/30 border-red-500/50' :
-              'bg-yellow-600/30 border-yellow-500/50'
-          }`}>
-          <span className="relative flex h-2 w-2">
-            <span className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${status === 'connected' ? 'bg-green-400' :
-                status === 'error' ? 'bg-red-400' : 'bg-yellow-400'
-              }`}></span>
-            <span className={`relative inline-flex rounded-full h-2 w-2 ${status === 'connected' ? 'bg-green-500' :
-                status === 'error' ? 'bg-red-500' : 'bg-yellow-500'
-              }`}></span>
-          </span>
-          <span className="text-xs font-bold text-white uppercase tracking-wider">
-            {status === 'connected' ? 'Live Connection' :
-              status === 'connecting' ? 'Connecting...' :
-                status === 'error' ? 'Connection Failed' : 'Ready to Connect'}
-          </span>
+          <div className="max-w-3xl">
+            <div className="inline-flex items-center gap-2 bg-burnished-gold/10 border border-burnished-gold/20 text-burnished-gold px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest mb-6">
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+              AI-Powered
+            </div>
+            <h1 className="text-4xl md:text-6xl font-black leading-tight mb-6 font-playfair">
+              {ui.heading.split(' ').slice(0, -1).join(' ')} <span className="text-transparent bg-clip-text bg-gradient-to-r from-burnished-gold to-white italic">{ui.heading.split(' ').slice(-1)}</span>
+            </h1>
+            <p className="text-mortar-gray text-lg md:text-xl leading-relaxed max-w-2xl">
+              {ui.subheading}
+            </p>
+          </div>
         </div>
       </div>
 
-      {/* MAIN CONTENT LAYER */}
-      <div className="flex-1 relative flex items-center justify-center">
-        {/* Video is always in the DOM so videoRef survives re-renders */}
-        <video
-          ref={videoRef}
-          autoPlay
-          playsInline
-          muted
-          className={`absolute inset-0 w-full h-full object-cover ${!hasPermission ? 'hidden' : ''}`}
-        />
-
-        {!hasPermission ? (
-          <div className="text-center p-8 max-w-md animate-in fade-in zoom-in duration-500">
-            <div className="w-24 h-24 bg-burnished-gold/10 rounded-full flex items-center justify-center mx-auto mb-8 border border-burnished-gold/30 relative">
-              <span className="absolute inset-0 rounded-full animate-ping bg-burnished-gold/20"></span>
-              <svg className="w-10 h-10 text-burnished-gold" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>
-            </div>
-            <h1 className="text-3xl font-black mb-4 tracking-tight">{ui.heading}</h1>
-            <p className="text-gray-400 mb-8 text-lg leading-relaxed" dangerouslySetInnerHTML={{ __html: ui.permissionPrompt }} />
-            <button
-              onClick={startCamera}
-              className="w-full py-4 btn-premium text-lg uppercase tracking-widest rounded-xl hover-lift transition-all"
-            >
-              {ui.startButton}
-            </button>
+      {/* MAIN CONTENT */}
+      <div className="container mx-auto px-6 pb-24 -mt-4">
+        {error && (
+          <div className="max-w-3xl mx-auto mb-8 flex items-center gap-3 p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 animate-in fade-in slide-in-from-top-2 duration-300">
+            <svg className="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z" /></svg>
+            <span className="text-sm font-medium">{error}</span>
           </div>
-        ) : (
-          <>
-            {/* AI OVERLAY UI */}
-            <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black via-black/80 to-transparent pt-32 pb-10 px-6">
-              <div className="flex items-end gap-4">
-                <div className="flex-1">
-                  <div className="bg-black/40 backdrop-blur-md rounded-2xl p-4 border border-white/10 mb-4 animate-in slide-in-from-bottom-5 fade-in duration-500 delay-200">
-                    <p className="text-burnished-gold font-bold text-xs uppercase tracking-wider mb-1">Masonry AI Advisor</p>
-                    <p className="text-lg font-medium leading-snug">
-                      "{aiMessage}"
-                    </p>
-                  </div>
+        )}
 
-                  {/* LIVE AUDIO WAVEFORM */}
-                  <div className="flex items-center justify-center gap-1 h-8">
-                    {waveformData.map((level, i) => (
-                      <div key={i} className="w-1 bg-burnished-gold/70 rounded-full transition-all duration-75" style={{ height: `${Math.max(8, level * 100)}%` }}></div>
-                    ))}
-                  </div>
+        {step === 'form' && (
+          <form onSubmit={handleSubmit} className="max-w-3xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+
+            {/* CONTACT INFO */}
+            <div className="glass-panel rounded-2xl p-6 md:p-8 border border-white/10">
+              <h2 className="text-lg font-bold mb-6 flex items-center gap-3">
+                <div className="w-8 h-8 rounded-lg bg-burnished-gold/10 flex items-center justify-center">
+                  <svg className="w-4 h-4 text-burnished-gold" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+                </div>
+                Your Information
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-bold text-mortar-gray uppercase tracking-wider mb-2">{ui.nameLabel}</label>
+                  <input type="text" value={name} onChange={e => setName(e.target.value)} required
+                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-white/30 focus:outline-none focus:ring-2 focus:ring-burnished-gold/50 focus:border-burnished-gold transition-all"
+                    placeholder={ui.namePlaceholder} />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-mortar-gray uppercase tracking-wider mb-2">{ui.emailLabel}</label>
+                  <input type="email" value={email} onChange={e => setEmail(e.target.value)} required
+                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-white/30 focus:outline-none focus:ring-2 focus:ring-burnished-gold/50 focus:border-burnished-gold transition-all"
+                    placeholder={ui.emailPlaceholder} />
                 </div>
               </div>
             </div>
-          </>
+
+            {/* PROJECT TYPE */}
+            <div className="glass-panel rounded-2xl p-6 md:p-8 border border-white/10">
+              <h2 className="text-lg font-bold mb-6 flex items-center gap-3">
+                <div className="w-8 h-8 rounded-lg bg-purple-500/10 flex items-center justify-center">
+                  <svg className="w-4 h-4 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>
+                </div>
+                {ui.projectTypeLabel}
+              </h2>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                {PROJECT_TYPES.map(pt => (
+                  <button key={pt.value} type="button" onClick={() => setProjectType(pt.value)}
+                    className={`p-4 rounded-xl text-left transition-all duration-200 border ${projectType === pt.value
+                      ? 'bg-burnished-gold/10 border-burnished-gold/50 text-burnished-gold shadow-[0_0_20px_rgba(197,160,89,0.15)]'
+                      : 'bg-white/5 border-white/10 text-mortar-gray hover:border-white/20 hover:bg-white/10'
+                      }`}>
+                    <span className="text-lg block mb-1">{pt.label.split(' ')[0]}</span>
+                    <span className="text-xs font-bold uppercase tracking-wider">{pt.label.split(' ').slice(1).join(' ')}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* DESCRIPTION */}
+            <div className="glass-panel rounded-2xl p-6 md:p-8 border border-white/10">
+              <h2 className="text-lg font-bold mb-6 flex items-center gap-3">
+                <div className="w-8 h-8 rounded-lg bg-sky-500/10 flex items-center justify-center">
+                  <svg className="w-4 h-4 text-sky-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
+                </div>
+                {ui.descriptionLabel}
+              </h2>
+              <textarea value={description} onChange={e => setDescription(e.target.value)} rows={5} required
+                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-white/30 focus:outline-none focus:ring-2 focus:ring-burnished-gold/50 focus:border-burnished-gold transition-all resize-none text-lg leading-relaxed"
+                placeholder={ui.descriptionPlaceholder} />
+            </div>
+
+            {/* TIMELINE & BUDGET */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div className="glass-panel rounded-2xl p-6 md:p-8 border border-white/10">
+                <h2 className="text-lg font-bold mb-4 flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center">
+                    <svg className="w-4 h-4 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                  </div>
+                  {ui.timelineLabel}
+                </h2>
+                <div className="space-y-2">
+                  {TIMELINES.map(t => (
+                    <button key={t.value} type="button" onClick={() => setTimeline(t.value)}
+                      className={`w-full p-3 rounded-xl text-left text-sm font-bold uppercase tracking-wider transition-all border ${timeline === t.value
+                        ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400'
+                        : 'bg-white/5 border-white/10 text-mortar-gray hover:border-white/20'
+                        }`}>
+                      {t.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="glass-panel rounded-2xl p-6 md:p-8 border border-white/10">
+                <h2 className="text-lg font-bold mb-4 flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-lg bg-amber-500/10 flex items-center justify-center">
+                    <svg className="w-4 h-4 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                  </div>
+                  {ui.budgetLabel}
+                </h2>
+                <div className="space-y-2">
+                  {BUDGETS.map(b => (
+                    <button key={b.value} type="button" onClick={() => setBudget(b.value)}
+                      className={`w-full p-3 rounded-xl text-left text-sm font-bold uppercase tracking-wider transition-all border ${budget === b.value
+                        ? 'bg-amber-500/10 border-amber-500/30 text-amber-400'
+                        : 'bg-white/5 border-white/10 text-mortar-gray hover:border-white/20'
+                        }`}>
+                      {b.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* SUBMIT */}
+            <button type="submit" disabled={!projectType || !description}
+              className="w-full py-5 rounded-2xl bg-gradient-to-r from-burnished-gold to-[#d4a84b] text-midnight-slate font-black text-lg uppercase tracking-widest shadow-[0_4px_30px_rgba(197,160,89,0.3)] hover:shadow-[0_8px_40px_rgba(197,160,89,0.5)] hover:-translate-y-1 transition-all disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-none flex items-center justify-center gap-3">
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+              {ui.submitButton}
+            </button>
+          </form>
+        )}
+
+        {step === 'loading' && (
+          <div className="max-w-3xl mx-auto text-center py-20 animate-in fade-in zoom-in duration-500">
+            <div className="w-24 h-24 mx-auto mb-8 relative">
+              <div className="absolute inset-0 rounded-full border-4 border-burnished-gold/20" />
+              <div className="absolute inset-0 rounded-full border-4 border-transparent border-t-burnished-gold animate-spin" />
+              <div className="absolute inset-3 rounded-full bg-burnished-gold/5 flex items-center justify-center">
+                <svg className="w-8 h-8 text-burnished-gold" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+              </div>
+            </div>
+            <h2 className="text-2xl font-black mb-3">Analyzing Your Project</h2>
+            <p className="text-mortar-gray max-w-md mx-auto">Our AI is evaluating materials, labor, and local market conditions to generate your custom estimate...</p>
+          </div>
+        )}
+
+        {step === 'result' && result && (
+          <div className="max-w-3xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <h2 className="text-3xl font-black text-center mb-2">{ui.resultTitle}</h2>
+
+            {/* ESTIMATE RANGE (Hero Card) */}
+            <div className="glass-panel rounded-3xl p-8 md:p-12 border border-burnished-gold/20 text-center bg-gradient-to-br from-burnished-gold/5 to-transparent">
+              <p className="text-xs font-bold text-burnished-gold uppercase tracking-widest mb-4">Estimated Investment</p>
+              <p className="text-5xl md:text-6xl font-black text-burnished-gold mb-4">{result.estimatedRange}</p>
+              <p className="text-mortar-gray max-w-lg mx-auto leading-relaxed">{result.scope}</p>
+            </div>
+
+            {/* DETAILS GRID */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* MATERIALS */}
+              <div className="glass-panel rounded-2xl p-6 border border-white/10">
+                <h3 className="font-bold mb-4 flex items-center gap-2">
+                  <div className="w-6 h-6 rounded bg-sky-500/10 flex items-center justify-center">
+                    <svg className="w-3 h-3 text-sky-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" /></svg>
+                  </div>
+                  Recommended Materials
+                </h3>
+                <ul className="space-y-2">
+                  {result.materials.map((m, i) => (
+                    <li key={i} className="flex items-center gap-2 text-sm text-mortar-gray">
+                      <span className="w-1.5 h-1.5 rounded-full bg-burnished-gold shrink-0" />
+                      {m}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              {/* TIMELINE */}
+              <div className="glass-panel rounded-2xl p-6 border border-white/10">
+                <h3 className="font-bold mb-4 flex items-center gap-2">
+                  <div className="w-6 h-6 rounded bg-emerald-500/10 flex items-center justify-center">
+                    <svg className="w-3 h-3 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                  </div>
+                  Estimated Timeline
+                </h3>
+                <p className="text-2xl font-black text-emerald-400 mb-2">{result.timelineEstimate}</p>
+                <p className="text-sm text-mortar-gray">From design approval to final walkthrough</p>
+              </div>
+            </div>
+
+            {/* CONSIDERATIONS */}
+            {result.considerations?.length > 0 && (
+              <div className="glass-panel rounded-2xl p-6 border border-white/10">
+                <h3 className="font-bold mb-4 flex items-center gap-2">
+                  <div className="w-6 h-6 rounded bg-amber-500/10 flex items-center justify-center">
+                    <svg className="w-3 h-3 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                  </div>
+                  Key Considerations
+                </h3>
+                <ul className="space-y-3">
+                  {result.considerations.map((c, i) => (
+                    <li key={i} className="flex items-start gap-3 text-sm text-mortar-gray">
+                      <span className="text-amber-400 font-bold mt-0.5">{i + 1}.</span>
+                      {c}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {/* DISCLAIMER + CTA */}
+            <div className="text-center space-y-6">
+              <p className="text-xs text-mortar-gray/60 max-w-lg mx-auto leading-relaxed">{ui.resultDisclaimer}</p>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <Link href="/contact"
+                  className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl bg-burnished-gold text-midnight-slate font-black uppercase tracking-wider shadow-[0_4px_20px_rgba(197,160,89,0.3)] hover:shadow-[0_6px_25px_rgba(197,160,89,0.5)] hover:-translate-y-0.5 transition-all">
+                  {ui.ctaButton}
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
+                </Link>
+                <button type="button" onClick={() => { setStep('form'); setResult(null); }}
+                  className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl border border-white/10 text-mortar-gray hover:text-white hover:border-white/30 font-bold uppercase tracking-wider transition-all">
+                  New Estimate
+                </button>
+              </div>
+            </div>
+          </div>
         )}
       </div>
     </div>

@@ -19,11 +19,11 @@ Focus on craftsmanship, materials, and tangible results.
 `.trim();
 
 export const PROJECT_WRITEUP_PROMPT = (params: {
-    title: string;
-    client: string;
-    location: string;
-    gallery?: Array<{ image: string; caption: string }>;
-    existingDescription?: string;
+  title: string;
+  client: string;
+  location: string;
+  gallery?: Array<{ image: string; caption: string }>;
+  existingDescription?: string;
 }) => `
 ${BRAND_CONTEXT}
 
@@ -50,9 +50,9 @@ Return ONLY valid JSON. No markdown fencing.
 `.trim();
 
 export const SERVICE_DESCRIPTION_PROMPT = (params: {
-    title: string;
-    category: string;
-    existingDescription?: string;
+  title: string;
+  category: string;
+  existingDescription?: string;
 }) => `
 ${BRAND_CONTEXT}
 
@@ -74,9 +74,9 @@ Return ONLY valid JSON. No markdown fencing.
 `.trim();
 
 export const BLOG_POST_PROMPT = (params: {
-    title: string;
-    category: string;
-    quickNotes?: string;
+  title: string;
+  category: string;
+  quickNotes?: string;
 }) => `
 ${BRAND_CONTEXT}
 
@@ -98,6 +98,47 @@ Guidelines:
 - End with a subtle CTA encouraging readers to contact us for a consultation
 - Use <h2> for main sections, <h3> for subsections
 - Include at least one bulleted list of tips or considerations
+
+Return ONLY valid JSON. No markdown fencing.
+`.trim();
+
+export const PROJECT_ESTIMATE_PROMPT = (params: {
+  projectType: string;
+  description: string;
+  timeline?: string;
+  budget?: string;
+}) => `
+${BRAND_CONTEXT}
+
+A potential customer has submitted a project estimate request. Generate a preliminary
+estimate and project scope analysis. Return a JSON object with these fields:
+
+- "estimatedRange": A price range string (e.g. "$8,000 - $14,000")
+- "scope": A 2-3 sentence summary of what this project entails (60-100 words)
+- "materials": An array of 4-6 recommended materials with brief notes (e.g. "Travertine pavers — excellent heat resistance for Texas summers")
+- "timelineEstimate": An estimated build timeline string (e.g. "2-3 Weeks")
+- "considerations": An array of 3-5 important factors the homeowner should know
+- "nextSteps": A brief sentence about what happens next (mention the consultation)
+
+Customer Request:
+- Project Type: ${params.projectType}
+- Description: ${params.description}
+${params.timeline ? `- Desired Timeline: ${params.timeline}` : ''}
+${params.budget ? `- Budget Indication: ${params.budget}` : ''}
+- Location: Central Texas (Austin metro area)
+
+Pricing Guidelines (rough ranges for Central Texas market):
+- Outdoor Kitchen: $15,000 - $80,000+
+- Pavers / Patio: $5,000 - $25,000
+- Fire Pit: $3,000 - $15,000
+- Retaining Wall: $5,000 - $30,000
+- Stone Veneer: $8,000 - $35,000
+- Pool Deck: $10,000 - $40,000
+- Driveway: $8,000 - $30,000
+- Commercial: $30,000 - $200,000+
+
+Be realistic with pricing. If the customer's budget indication doesn't match typical
+costs for their project type, address this diplomatically in considerations.
 
 Return ONLY valid JSON. No markdown fencing.
 `.trim();
