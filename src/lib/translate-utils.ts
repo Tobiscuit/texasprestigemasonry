@@ -19,17 +19,17 @@ function getLanguageName(locale: string): string {
 
 async function fetchGemini(promptText: string) {
   if (!apiKey) throw new Error('GEMINI_API_KEY is not set');
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.0-flash-preview:generateContent?key=${apiKey}`;
   const payload = {
     contents: [{ parts: [{ text: promptText }] }]
   };
-  
+
   const res = await fetch(url, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload)
   });
-  
+
   if (!res.ok) throw new Error('Gemini API Error');
   const data = await res.json();
   return data?.candidates?.[0]?.content?.parts?.[0]?.text;
@@ -40,7 +40,7 @@ async function fetchGemini(promptText: string) {
  */
 export async function translate(text: string, context: string, targetLocale: string = 'es'): Promise<string> {
   if (!text || text.trim().length === 0) return text;
-  
+
   const langName = getLanguageName(targetLocale);
   try {
     const resultText = await fetchGemini(`Translate the following ${context} from English to ${langName}.

@@ -2,69 +2,69 @@
 
 // Polyfilling Gemini typical types since we uninstalled the 11MB SDK wrapper
 export enum Type {
-  STRING = "STRING",
-  NUMBER = "NUMBER",
-  INTEGER = "INTEGER",
-  BOOLEAN = "BOOLEAN",
-  ARRAY = "ARRAY",
-  OBJECT = "OBJECT",
+    STRING = "STRING",
+    NUMBER = "NUMBER",
+    INTEGER = "INTEGER",
+    BOOLEAN = "BOOLEAN",
+    ARRAY = "ARRAY",
+    OBJECT = "OBJECT",
 }
 
 export interface Schema {
-  type: Type;
-  format?: string;
-  description?: string;
-  nullable?: boolean;
-  enum?: string[];
-  maxItems?: string;
-  minItems?: string;
-  properties?: { [k: string]: Schema };
-  required?: string[];
-  items?: Schema;
+    type: Type;
+    format?: string;
+    description?: string;
+    nullable?: boolean;
+    enum?: string[];
+    maxItems?: string;
+    minItems?: string;
+    properties?: { [k: string]: Schema };
+    required?: string[];
+    items?: Schema;
 }
 
 const apiKey = process.env.GEMINI_API_KEY;
 
 // --- Helper: Generic Generator ---
 async function generateContent(systemPrompt: string, userPrompt: string, schema?: Schema, responseMimeType: string = 'application/json') {
-  if (!apiKey) throw new Error('GEMINI_API_KEY is not set');
+    if (!apiKey) throw new Error('GEMINI_API_KEY is not set');
 
-  try {
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
-    const payload = {
-      contents: [
-        {
-          role: 'user',
-          parts: [{ text: `${systemPrompt}\n\nTasks:\n${userPrompt}` }]
+    try {
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-pro-preview:generateContent?key=${apiKey}`;
+        const payload = {
+            contents: [
+                {
+                    role: 'user',
+                    parts: [{ text: `${systemPrompt}\n\nTasks:\n${userPrompt}` }]
+                }
+            ],
+            generationConfig: {
+                responseMimeType,
+                ...(schema ? { responseSchema: schema as object } : {}),
+            },
+        };
+
+        const res = await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+
+        if (!res.ok) {
+            const errObj = await res.json().catch(() => ({}));
+            throw new Error(`Gemini API Error: ${res.status} ${res.statusText} - ${JSON.stringify(errObj)}`);
         }
-      ],
-      generationConfig: {
-        responseMimeType,
-        ...(schema ? { responseSchema: schema as object } : {}),
-      },
-    };
 
-    const res = await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-    });
-    
-    if (!res.ok) {
-        const errObj = await res.json().catch(() => ({}));
-        throw new Error(`Gemini API Error: ${res.status} ${res.statusText} - ${JSON.stringify(errObj)}`);
+        const data = await res.json();
+        const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+
+        if (!text) throw new Error('No content generated');
+
+        return JSON.parse(text);
+    } catch (error) {
+        console.error('AI Generation Error:', error);
+        throw error;
     }
-
-    const data = await res.json();
-    const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
-    
-    if (!text) throw new Error('No content generated');
-    
-    return JSON.parse(text);
-  } catch (error) {
-    console.error('AI Generation Error:', error);
-    throw error;
-  }
 }
 
 // --- Feature: Blog Post Generator ---
@@ -72,18 +72,18 @@ export async function generatePostContent(prompt: string): Promise<any> {
     const schema: Schema = {
         type: Type.OBJECT,
         properties: {
-        title: { type: Type.STRING },
-        excerpt: { type: Type.STRING },
-        category: { 
-            type: Type.STRING, 
-            enum: ['repair-tips', 'product-spotlight', 'contractor-insights', 'maintenance-guide', 'industry-news'] 
-        },
-        keywords: { 
-            type: Type.ARRAY, 
-            items: { type: Type.STRING } 
-        },
-        content: { type: Type.STRING, description: 'Main article body in semantic HTML (<p>, <h2>, <ul>, etc)' },
-        imagePrompt: { type: Type.STRING, description: 'A highly detailed prompt for generating a photorealistic featured image for this article.' }
+            title: { type: Type.STRING },
+            excerpt: { type: Type.STRING },
+            category: {
+                type: Type.STRING,
+                enum: ['repair-tips', 'product-spotlight', 'contractor-insights', 'maintenance-guide', 'industry-news']
+            },
+            keywords: {
+                type: Type.ARRAY,
+                items: { type: Type.STRING }
+            },
+            content: { type: Type.STRING, description: 'Main article body in semantic HTML (<p>, <h2>, <ul>, etc)' },
+            imagePrompt: { type: Type.STRING, description: 'A highly detailed prompt for generating a photorealistic featured image for this article.' }
         },
         required: ['title', 'excerpt', 'category', 'keywords', 'content', 'imagePrompt'],
     };
@@ -104,7 +104,7 @@ export async function generatePostContent(prompt: string): Promise<any> {
 
     let resultJson: any = {};
     try {
-        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-pro-exp-02-05:generateContent?key=${apiKey}`;
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-pro-preview:generateContent?key=${apiKey}`;
         const payload = {
             contents: [
                 {
@@ -123,11 +123,11 @@ export async function generatePostContent(prompt: string): Promise<any> {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
         });
-        
+
         if (!res.ok) throw new Error(`Gemini Text Gen Error: ${res.statusText}`);
         const data = await res.json();
         const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
-        
+
         if (!text) throw new Error('No content generated');
         resultJson = JSON.parse(text);
     } catch (error) {
@@ -138,18 +138,18 @@ export async function generatePostContent(prompt: string): Promise<any> {
     let featuredImageId = null;
     try {
         if (resultJson.imagePrompt) {
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/imagen-3.0-generate-001:predict?key=${apiKey}`;
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/nano-banana-pro:predict?key=${apiKey}`;
             const payload = {
                 instances: [{ prompt: resultJson.imagePrompt }],
                 parameters: { sampleCount: 1, aspectRatio: '16:9' }
             };
-            
+
             const res = await fetch(url, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
             });
-            
+
             if (res.ok) {
                 const data = await res.json();
                 let base64Image = data?.predictions?.[0]?.bytesBase64Encoded;
@@ -325,23 +325,23 @@ Here is the EXISTING REST OF THE DRAFT for your context (do not regenerate these
         // Download and append each image
         for (const img of imagesContext) {
             if (!img.url) continue;
-            
+
             // Handle relative URLs if running locally
             const fullUrl = img.url.startsWith('http') ? img.url : `${process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000'}${img.url}`;
-            
+
             try {
                 const response = await fetch(fullUrl);
                 if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
                 const arrayBuffer = await response.arrayBuffer();
                 const buffer = Buffer.from(arrayBuffer);
-                
+
                 parts.push({
                     inlineData: {
                         data: buffer.toString('base64'),
                         mimeType: img.mimeType || 'image/jpeg'
                     }
                 });
-                
+
                 if (img.caption) {
                     parts.push({ text: `Caption for the above image: ${img.caption}` });
                 }
@@ -350,7 +350,7 @@ Here is the EXISTING REST OF THE DRAFT for your context (do not regenerate these
             }
         }
 
-        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-pro-preview:generateContent?key=${apiKey}`;
         const payload = {
             contents: [{ role: 'user', parts: parts }],
             generationConfig: {
@@ -369,7 +369,7 @@ Here is the EXISTING REST OF THE DRAFT for your context (do not regenerate these
         const data = await res.json();
         const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
         if (!text) throw new Error('No content generated');
-        
+
         return JSON.parse(text);
     } catch (error) {
         console.error('AI Multimodal Generation Error:', error);
@@ -399,7 +399,7 @@ export async function extractProjectContext(contextString: string) {
     if (!apiKey) throw new Error('GEMINI_API_KEY is not set');
 
     try {
-        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-pro-preview:generateContent?key=${apiKey}`;
         const payload = {
             contents: [{ role: 'user', parts: [{ text: `${systemPrompt}\n\nUser Input:\n"${contextString}"` }] }],
             generationConfig: {
@@ -413,12 +413,12 @@ export async function extractProjectContext(contextString: string) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
         });
-        
+
         if (!res.ok) throw new Error(`Gemini Context Error: ${res.statusText}`);
         const data = await res.json();
         const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
         if (!text) return { client: '', location: '' };
-        
+
         return JSON.parse(text);
     } catch (error) {
         console.error('AI Smart Context Extraction Error:', error);
