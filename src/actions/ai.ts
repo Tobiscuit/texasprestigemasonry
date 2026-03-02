@@ -138,7 +138,7 @@ export async function generatePostContent(prompt: string): Promise<any> {
     let featuredImageId = null;
     try {
         if (resultJson.imagePrompt) {
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/nano-banana-pro:predict?key=${apiKey}`;
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-pro-image-preview:predict?key=${apiKey}`;
             const payload = {
                 instances: [{ prompt: resultJson.imagePrompt }],
                 parameters: { sampleCount: 1, aspectRatio: '16:9' }
