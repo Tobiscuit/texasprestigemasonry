@@ -62,7 +62,17 @@ const ALLOWED_CONTENT_TYPES = new Set([
 
 const MAX_FILE_SIZE_BYTES = 10 * 1024 * 1024; // 10 MB
 
-const PUBLIC_BUCKET_DOMAIN = 'https://media.texasprestigemasonry.com';
+/**
+ * The public URL base for the R2 bucket.
+ *
+ * Configure via R2_PUBLIC_URL env var. Options:
+ * - r2.dev subdomain: https://pub-{hash}.r2.dev
+ * - Custom domain: https://media.texasprestigemasonry.com
+ *
+ * Enable public access on Cloudflare Dashboard:
+ * R2 → tpm-media-assets → Settings → Public Access
+ */
+const PUBLIC_BUCKET_DOMAIN = process.env.R2_PUBLIC_URL || 'https://media.texasprestigemasonry.com';
 
 // ─── R2 Implementation ──────────────────────────────────────────────────────
 
