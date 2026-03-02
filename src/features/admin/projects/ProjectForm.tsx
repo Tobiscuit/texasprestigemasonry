@@ -68,6 +68,37 @@ export default function ProjectForm({ initialData, isEdit }: ProjectFormProps) {
   };
   const removeGalleryItem = (index: number) => setGallery(gallery.filter((_, i) => i !== index));
 
+  const [uploadingIndexes, setUploadingIndexes] = useState<Set<number>>(new Set());
+
+  const handleFileUpload = async (files: FileList | null, targetIndex?: number) => {
+    if (!files || files.length === 0) return;
+
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const idx = targetIndex !== undefined ? targetIndex : gallery.length + i;
+      setUploadingIndexes(prev => new Set(prev).add(idx));
+
+      try {
+        const res = await fetch('/api/upload', { method: 'POST', body: formData });
+        if (!res.ok) throw new Error('Upload failed');
+        const data = await res.json();
+
+        if (targetIndex !== undefined) {
+          updateGalleryItem(targetIndex, 'image', data.url);
+        } else {
+          setGallery(prev => [...prev, { image: data.url, caption: file.name.replace(/\.\w+$/, '') }]);
+        }
+      } catch {
+        setError(`Failed to upload ${file.name}`);
+      } finally {
+        setUploadingIndexes(prev => { const next = new Set(prev); next.delete(idx); return next; });
+      }
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSaving(true);
@@ -267,19 +298,41 @@ export default function ProjectForm({ initialData, isEdit }: ProjectFormProps) {
         </div>
         <div className="p-6">
           {gallery.length === 0 ? (
-            <div className="text-center py-12 border-2 border-dashed border-[var(--staff-border)] rounded-xl">
+            <div className="text-center py-12 border-2 border-dashed border-[var(--staff-border)] rounded-xl hover:border-[#f1c40f]/30 transition-colors">
               <svg className="w-12 h-12 mx-auto text-[var(--staff-muted)]/30 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
-              <p className="text-sm text-[var(--staff-muted)]">No gallery images yet</p>
-              <button type="button" onClick={addGalleryItem} className="mt-3 text-xs font-bold text-[#f1c40f] hover:underline">+ Add your first image</button>
+              <p className="text-sm text-[var(--staff-muted)] mb-3">No gallery images yet</p>
+              <div className="flex justify-center gap-3">
+                <label className="cursor-pointer text-xs font-bold text-[#f1c40f] bg-[#f1c40f]/10 px-4 py-2 rounded-lg hover:bg-[#f1c40f]/20 transition-colors">
+                  📁 Upload Files
+                  <input type="file" multiple accept="image/*" className="hidden" onChange={e => handleFileUpload(e.target.files)} />
+                </label>
+                <button type="button" onClick={addGalleryItem} className="text-xs font-bold text-[var(--staff-muted)] hover:text-[var(--staff-text)] px-4 py-2 rounded-lg border border-[var(--staff-border)] hover:border-[#f1c40f]/50 transition-colors">+ Add URL</button>
+              </div>
             </div>
           ) : (
             <div className="space-y-4">
               {gallery.map((item, i) => (
                 <div key={i} className="flex items-start gap-4 p-4 bg-[var(--staff-surface-alt)] rounded-xl border border-[var(--staff-border)] group animate-in fade-in slide-in-from-left-2 duration-300">
+                  {/* Thumbnail preview */}
+                  {item.image && (
+                    <div className="w-16 h-16 rounded-lg bg-[var(--staff-surface)] border border-[var(--staff-border)] overflow-hidden shrink-0">
+                      <img src={item.image} alt="" className="w-full h-full object-cover" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
+                    </div>
+                  )}
                   <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-3">
-                    <input type="url" value={item.image} onChange={e => updateGalleryItem(i, 'image', e.target.value)}
-                      className="bg-[var(--staff-surface)] border border-[var(--staff-border)] rounded-lg px-3 py-2 text-sm text-[var(--staff-text)] placeholder:text-[var(--staff-muted)]/50 focus:outline-none focus:ring-2 focus:ring-[#f1c40f]/50 transition-all"
-                      placeholder="Image URL" />
+                    <div className="flex gap-2">
+                      <input type="url" value={item.image} onChange={e => updateGalleryItem(i, 'image', e.target.value)}
+                        className="flex-1 bg-[var(--staff-surface)] border border-[var(--staff-border)] rounded-lg px-3 py-2 text-sm text-[var(--staff-text)] placeholder:text-[var(--staff-muted)]/50 focus:outline-none focus:ring-2 focus:ring-[#f1c40f]/50 transition-all"
+                        placeholder="Image URL or upload →" />
+                      <label className="cursor-pointer px-2 py-2 rounded-lg bg-[var(--staff-surface)] border border-[var(--staff-border)] hover:border-[#f1c40f]/50 transition-colors flex items-center">
+                        {uploadingIndexes.has(i) ? (
+                          <svg className="w-4 h-4 animate-spin text-[#f1c40f]" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" /></svg>
+                        ) : (
+                          <svg className="w-4 h-4 text-[var(--staff-muted)]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg>
+                        )}
+                        <input type="file" accept="image/*" className="hidden" onChange={e => handleFileUpload(e.target.files, i)} />
+                      </label>
+                    </div>
                     <input type="text" value={item.caption} onChange={e => updateGalleryItem(i, 'caption', e.target.value)}
                       className="bg-[var(--staff-surface)] border border-[var(--staff-border)] rounded-lg px-3 py-2 text-sm text-[var(--staff-text)] placeholder:text-[var(--staff-muted)]/50 focus:outline-none focus:ring-2 focus:ring-[#f1c40f]/50 transition-all"
                       placeholder="Caption (optional)" />
@@ -290,6 +343,13 @@ export default function ProjectForm({ initialData, isEdit }: ProjectFormProps) {
                   </button>
                 </div>
               ))}
+              <div className="flex justify-center pt-2">
+                <label className="cursor-pointer flex items-center gap-2 text-xs font-bold text-[var(--staff-muted)] hover:text-[#f1c40f] transition-colors">
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
+                  Upload More
+                  <input type="file" multiple accept="image/*" className="hidden" onChange={e => handleFileUpload(e.target.files)} />
+                </label>
+              </div>
             </div>
           )}
         </div>
