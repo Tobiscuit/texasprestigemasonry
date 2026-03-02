@@ -21,12 +21,14 @@ import { servicesApp } from './routes/services';
 import { projectsApp } from './routes/projects';
 import { postsApp } from './routes/posts';
 import { testimonialsApp } from './routes/testimonials';
+import { aiApp } from './routes/ai';
 
 app.route('/users', usersApp);
 app.route('/services', servicesApp);
 app.route('/projects', projectsApp);
 app.route('/posts', postsApp);
 app.route('/testimonials', testimonialsApp);
+app.route('/ai', aiApp);
 
 // ─── Export HTTP handlers ────────────────────────────────────────────────
 export const GET = handle(app);
