@@ -3,13 +3,14 @@ import Hero from '@/shared/layout/Hero';
 import Services from '@/features/landing/Services';
 import TrustIndicators from '@/features/landing/TrustIndicators';
 import ValueStack from '@/features/landing/ValueStack';
+import { getServices } from './dashboard/services/actions';
+import { getTestimonials } from './dashboard/testimonials/actions';
 
 export default async function Home({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
 
-  // Fall back to empty arrays so components use their built-in mock/default data
-  const services: any[] = [];
-  const testimonials: any[] = [];
+  const services = await getServices();
+  const testimonials = await getTestimonials();
 
   return (
     <>
@@ -20,3 +21,4 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
     </>
   );
 }
+
