@@ -21,3 +21,4 @@ bucket_name = "tpm-media-assets"
 # Environment variables
 [vars]
 NEXT_PUBLIC_SERVER_URL = "https://texasprestigemasonry.com"
+R2_PUBLIC_URL = "https://pub-3a4c280f5ce34c8c94e38baf04128cae.r2.dev"

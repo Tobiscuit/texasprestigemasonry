@@ -72,7 +72,7 @@ const MAX_FILE_SIZE_BYTES = 10 * 1024 * 1024; // 10 MB
  * Enable public access on Cloudflare Dashboard:
  * R2 → tpm-media-assets → Settings → Public Access
  */
-const PUBLIC_BUCKET_DOMAIN = process.env.R2_PUBLIC_URL || 'https://media.texasprestigemasonry.com';
+const PUBLIC_BUCKET_DOMAIN = process.env.R2_PUBLIC_URL || 'https://pub-3a4c280f5ce34c8c94e38baf04128cae.r2.dev';
 
 // ─── R2 Implementation ──────────────────────────────────────────────────────
 
