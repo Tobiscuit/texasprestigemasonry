@@ -6,7 +6,7 @@ import { getLocale } from 'next-intl/server'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  metadataBase: new URL('http://localhost:3000'),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SERVER_URL || 'https://texasprestigemasonry.com'),
   title: 'Texas Prestige Masonry — Premium Masonry Services',
   description: 'Premium masonry services across Texas. Outdoor kitchens, custom pavers, chimneys, brick & block, fire pits, and stone repairs for residential and commercial properties.',
   keywords: ['masonry', 'outdoor kitchens', 'pavers', 'chimneys', 'fire pits', 'stone repair', 'brick and block', 'Texas masonry'],
