@@ -5,9 +5,11 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { ThemeSwitcher } from '@/shared/ui/ThemeSwitcher';
+import { LoginModal } from '@/components/LoginModal';
 
 const Header: React.FC = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const pathname = usePathname();
   const t = useTranslations('nav');
 
@@ -18,7 +20,7 @@ const Header: React.FC = () => {
     <>
       <header className="fixed top-0 left-0 right-0 z-50 transition-all duration-300 border-b border-white/10 backdrop-blur-xl bg-midnight-slate/90 text-sandstone supports-[backdrop-filter]:bg-midnight-slate/60">
         <div className="container mx-auto px-6 h-20 flex items-center justify-between">
-          
+
           {/* LOGO */}
           <Link href="/" className="flex items-center gap-3 group">
             <div className="bg-burnished-gold/10 p-2 rounded-lg border border-burnished-gold/20 group-hover:border-burnished-gold/50 transition-colors">
@@ -39,14 +41,13 @@ const Header: React.FC = () => {
               { path: '/blog', label: t('blog') },
               { path: '/about', label: t('about') }
             ].map((link) => (
-              <Link 
+              <Link
                 key={link.path}
-                href={link.path} 
-                className={`px-5 py-2 rounded-full text-sm font-medium transition-all ${
-                  isActive(link.path) 
-                    ? 'bg-white/10 text-sandstone shadow-inner' 
+                href={link.path}
+                className={`px-5 py-2 rounded-full text-sm font-medium transition-all ${isActive(link.path)
+                    ? 'bg-white/10 text-sandstone shadow-inner'
                     : 'text-mortar-gray hover:text-sandstone hover:bg-white/5'
-                }`}
+                  }`}
               >
                 {link.label}
               </Link>
@@ -55,6 +56,12 @@ const Header: React.FC = () => {
 
           {/* DESKTOP ACTIONS */}
           <div className="hidden md:flex items-center gap-4">
+            <button
+              onClick={() => setIsLoginModalOpen(true)}
+              className="text-sm font-bold text-mortar-gray hover:text-burnished-gold transition-colors tracking-wide uppercase"
+            >
+              Portal
+            </button>
             <ThemeSwitcher />
             <Link href="/contact" className="btn-premium text-xs">
               {t('free_estimate') || 'Free Estimate'}
@@ -62,7 +69,7 @@ const Header: React.FC = () => {
           </div>
 
           {/* MOBILE TOGGLE */}
-          <button 
+          <button
             className="md:hidden p-2 text-mortar-gray hover:text-sandstone"
             onClick={toggleMobileMenu}
             aria-label="Toggle menu"
@@ -77,11 +84,10 @@ const Header: React.FC = () => {
           </button>
         </div>
       </header>
-      
+
       {/* Mobile Navigation */}
-      <div className={`fixed inset-0 z-40 bg-midnight-slate/98 backdrop-blur-3xl transition-all duration-300 md:hidden flex flex-col pt-24 px-6 ${
-        isMobileMenuOpen ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-full pointer-events-none'
-      }`}>
+      <div className={`fixed inset-0 z-40 bg-midnight-slate/98 backdrop-blur-3xl transition-all duration-300 md:hidden flex flex-col pt-24 px-6 ${isMobileMenuOpen ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-full pointer-events-none'
+        }`}>
         <div className="flex flex-col gap-6 text-center">
           {[
             { path: '/services', label: t('services') },
@@ -89,19 +95,27 @@ const Header: React.FC = () => {
             { path: '/blog', label: t('blog') },
             { path: '/about', label: t('about') }
           ].map((link) => (
-            <Link 
+            <Link
               key={link.path}
-              href={link.path} 
+              href={link.path}
               onClick={() => setIsMobileMenuOpen(false)}
-              className={`text-2xl font-bold font-playfair transition-colors ${
-                isActive(link.path) ? 'text-burnished-gold' : 'text-sandstone hover:text-burnished-gold'
-              }`}
+              className={`text-2xl font-bold font-playfair transition-colors ${isActive(link.path) ? 'text-burnished-gold' : 'text-sandstone hover:text-burnished-gold'
+                }`}
             >
               {link.label}
             </Link>
           ))}
           <div className="h-px w-20 mx-auto bg-white/10 my-4"></div>
-          <div className="flex justify-center mb-4">
+          <button
+            onClick={() => {
+              setIsMobileMenuOpen(false);
+              setIsLoginModalOpen(true);
+            }}
+            className="text-xl font-bold font-playfair text-sandstone hover:text-burnished-gold transition-colors"
+          >
+            Client Portal
+          </button>
+          <div className="flex justify-center mb-4 mt-2">
             <ThemeSwitcher />
           </div>
           <Link href="/contact" onClick={() => setIsMobileMenuOpen(false)} className="btn-premium mx-auto">
@@ -109,6 +123,11 @@ const Header: React.FC = () => {
           </Link>
         </div>
       </div>
+
+      <LoginModal
+        isOpen={isLoginModalOpen}
+        onClose={() => setIsLoginModalOpen(false)}
+      />
     </>
   );
 };
