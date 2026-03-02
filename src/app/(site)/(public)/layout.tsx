@@ -1,11 +1,7 @@
-
-import React, { Suspense } from 'react'
-import Header from '@/shared/layout/Header'
-import Footer from '@/shared/layout/Footer'
-import ScrollSaver from '@/shared/layout/ScrollSaver'
-import PageTransition from '@/shared/layout/PageTransition'
+import React from 'react'
 import { NextIntlClientProvider } from 'next-intl'
 import { getLocale, getMessages } from 'next-intl/server'
+import PublicLayoutWrapper from '@/shared/layout/PublicLayoutWrapper'
 
 export default async function PublicLayout({
   children,
@@ -17,20 +13,9 @@ export default async function PublicLayout({
 
   return (
     <NextIntlClientProvider locale={locale} messages={messages}>
-      <div className="flex flex-col min-h-screen bg-background text-primary">
-        <ScrollSaver />
-        <Suspense fallback={<div className="h-20 border-b border-white/10 bg-midnight-slate/90" />}>
-          <Header />
-        </Suspense>
-        <main className="flex-grow relative">
-          <PageTransition>
-            {children}
-          </PageTransition>
-        </main>
-        <Footer />
-      </div>
+      <PublicLayoutWrapper>
+        {children}
+      </PublicLayoutWrapper>
     </NextIntlClientProvider>
   )
 }
-
-
