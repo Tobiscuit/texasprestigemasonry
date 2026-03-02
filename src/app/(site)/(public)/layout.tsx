@@ -1,5 +1,5 @@
 
-import React from 'react'
+import React, { Suspense } from 'react'
 import Header from '@/shared/layout/Header'
 import Footer from '@/shared/layout/Footer'
 import ScrollSaver from '@/shared/layout/ScrollSaver'
@@ -19,7 +19,9 @@ export default async function PublicLayout({
     <NextIntlClientProvider locale={locale} messages={messages}>
       <div className="flex flex-col min-h-screen bg-background text-primary">
         <ScrollSaver />
-        <Header />
+        <Suspense fallback={<div className="h-20 border-b border-white/10 bg-midnight-slate/90" />}>
+          <Header />
+        </Suspense>
         <main className="flex-grow relative">
           <PageTransition>
             {children}

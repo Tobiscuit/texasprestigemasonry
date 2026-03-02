@@ -21,13 +21,18 @@ const baseURL =
 const rpID = new URL(baseURL).hostname;
 const authSecret = process.env.BETTER_AUTH_SECRET;
 
-const memoryDB: Record<string, any[]> = {
+const memoryDB: Record<string, any[]> = (globalThis as any)._betterAuthMemoryDB || {
   user: [],
   session: [],
   account: [],
   verification: [],
   passkey: [],
 };
+
+if (process.env.NODE_ENV !== 'production') {
+  (globalThis as any)._betterAuthMemoryDB = memoryDB;
+}
+
 export const auth = betterAuth({
   baseURL: process.env.BETTER_AUTH_BASE_URL || "http://localhost:3000",
   secret: process.env.BETTER_AUTH_SECRET || "fallback_secret_for_build",

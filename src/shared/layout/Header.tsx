@@ -2,8 +2,9 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useSearchParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
+import { useEffect } from 'react';
 import { ThemeSwitcher } from '@/shared/ui/ThemeSwitcher';
 import { LoginModal } from '@/components/LoginModal';
 
@@ -11,7 +12,14 @@ const Header: React.FC = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const t = useTranslations('nav');
+
+  useEffect(() => {
+    if (searchParams.get('login') === 'true') {
+      setIsLoginModalOpen(true);
+    }
+  }, [searchParams]);
 
   const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
   const isActive = (path: string) => pathname === path || pathname.endsWith(path);
@@ -45,8 +53,8 @@ const Header: React.FC = () => {
                 key={link.path}
                 href={link.path}
                 className={`px-5 py-2 rounded-full text-sm font-medium transition-all ${isActive(link.path)
-                    ? 'bg-white/10 text-sandstone shadow-inner'
-                    : 'text-mortar-gray hover:text-sandstone hover:bg-white/5'
+                  ? 'bg-white/10 text-sandstone shadow-inner'
+                  : 'text-mortar-gray hover:text-sandstone hover:bg-white/5'
                   }`}
               >
                 {link.label}

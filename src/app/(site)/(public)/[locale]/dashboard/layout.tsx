@@ -17,7 +17,7 @@ export default async function DashboardLayout({
   const session = await getSessionSafe(headersList);
 
   if (!session) {
-    redirect('/login');
+    redirect('/?login=true');
   }
 
   // Role-based access control
