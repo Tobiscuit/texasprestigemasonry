@@ -77,6 +77,7 @@ export default function ProjectForm({ initialData, isEdit }: ProjectFormProps) {
       const file = files[i];
       const formData = new FormData();
       formData.append('file', file);
+      formData.append('category', 'projects');
 
       const idx = targetIndex !== undefined ? targetIndex : gallery.length + i;
       setUploadingIndexes(prev => new Set(prev).add(idx));

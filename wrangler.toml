@@ -13,10 +13,10 @@ binding = "DB"
 database_name = "texasprestigemasonry-db"
 database_id = "d27c7333-d9a2-4651-a4f1-05e99f98f6b8"
 
-# R2 Bucket for media uploads (optional, configure when ready)
-# [[r2_buckets]]
-# binding = "MEDIA_BUCKET"
-# bucket_name = "texas-prestige-masonry-media"
+# R2 Bucket for media uploads
+[[r2_buckets]]
+binding = "MEDIA_BUCKET"
+bucket_name = "tpm-media-assets"
 
 # Environment variables
 [vars]

@@ -1,39 +1,50 @@
 'use server';
 
-// import { getPayload } from 'payload';
-// import configPromise from '@payload-config';
 import { revalidatePath } from 'next/cache';
 
+const API_BASE = process.env.NEXT_PUBLIC_SERVER_URL || '';
+
 export async function getSettings() {
-  // TODO: Replace with Hono API call
-  return {
-    companyName: 'Texas Prestige Masonry',
-    phone: '',
-    email: '',
-    licenseNumber: '',
-    insuranceAmount: '',
-    bbbRating: '',
-    missionStatement: '',
-    stats: [],
-    values: [],
-    brandVoice: '',
-    brandTone: '',
-    brandAvoid: '',
-    themePreference: 'candlelight' as const,
-    warranty: {
-      enableNotifications: false,
-      notificationEmailTemplate: '',
-    },
-  };
+  try {
+    const res = await fetch(`${API_BASE}/api/settings`, {
+      cache: 'no-store',
+    });
+    if (!res.ok) throw new Error('Failed to fetch settings');
+    return await res.json();
+  } catch (error) {
+    console.error('getSettings error:', error);
+    // Return defaults if API fails
+    return {
+      companyName: 'Texas Prestige Masonry',
+      phone: '',
+      email: '',
+      licenseNumber: '',
+      insuranceAmount: '',
+      bbbRating: '',
+      missionStatement: '',
+      brandVoice: '',
+      brandTone: '',
+      brandAvoid: '',
+      themePreference: 'candlelight',
+    };
+  }
 }
 
 export async function updateSettings(formData: FormData) {
-  const companyName = formData.get('companyName') as string;
-  const phone = formData.get('phone') as string;
-  const email = formData.get('email') as string;
+  const body: Record<string, string> = {};
+  formData.forEach((value, key) => {
+    body[key] = value as string;
+  });
 
   try {
-    console.log('Mock update settings:', { companyName, phone, email });
+    const res = await fetch(`${API_BASE}/api/settings`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+
+    if (!res.ok) throw new Error('Failed to save settings');
+
     revalidatePath('/dashboard/settings');
     revalidatePath('/', 'layout');
     return { success: true };

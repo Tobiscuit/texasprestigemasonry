@@ -116,3 +116,26 @@ export const payments = sqliteTable('payments', {
   createdAt: text('created_at').notNull().default(sql`(CURRENT_TIMESTAMP)`),
   updatedAt: text('updated_at').notNull().default(sql`(CURRENT_TIMESTAMP)`),
 });
+
+/**
+ * Site Settings — single-row key-value store.
+ *
+ * Uses 'singleton' as the sole primary key value to enforce
+ * a single row. Contains company contact info and brand voice
+ * settings that feed AI prompt templates.
+ */
+export const siteSettings = sqliteTable('site_settings', {
+  id: text('id').primaryKey().default('singleton'),
+  companyName: text('company_name').notNull().default('Texas Prestige Masonry'),
+  phone: text('phone').default(''),
+  email: text('email').default(''),
+  licenseNumber: text('license_number').default(''),
+  insuranceAmount: text('insurance_amount').default(''),
+  bbbRating: text('bbb_rating').default(''),
+  missionStatement: text('mission_statement').default(''),
+  brandVoice: text('brand_voice').default(''),
+  brandTone: text('brand_tone').default(''),
+  brandAvoid: text('brand_avoid').default(''),
+  themePreference: text('theme_preference').default('candlelight'),
+  updatedAt: text('updated_at').notNull().default(sql`(CURRENT_TIMESTAMP)`),
+});

@@ -23,6 +23,7 @@ import { postsApp } from './routes/posts';
 import { testimonialsApp } from './routes/testimonials';
 import { aiApp } from './routes/ai';
 import { uploadApp } from './routes/upload';
+import { settingsApp } from './routes/settings';
 
 app.route('/users', usersApp);
 app.route('/services', servicesApp);
@@ -31,6 +32,7 @@ app.route('/posts', postsApp);
 app.route('/testimonials', testimonialsApp);
 app.route('/ai', aiApp);
 app.route('/upload', uploadApp);
+app.route('/settings', settingsApp);
 
 // ─── Export HTTP handlers ────────────────────────────────────────────────
 export const GET = handle(app);
